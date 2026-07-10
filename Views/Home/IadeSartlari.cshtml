@@ -1,0 +1,217 @@
+@{
+    ViewData["Title"] = "İptal, İade ve Değişim Şartları";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    
+    .return-card {
+        background-color: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-top: 3px solid #dc3545;
+        border-radius: 12px;
+        padding: 2.5rem;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .return-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+    }
+    
+    .return-title {
+        color: #fff;
+        font-weight: bold;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .return-text {
+        color: #aaa;
+        line-height: 1.8;
+        font-size: 0.95rem;
+        text-align: justify;
+    }
+
+    .contract-highlight {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .attention-box {
+        background-color: #0f0b00;
+        border: 1px solid #ffc107;
+        border-left: 5px solid #ffc107;
+        border-radius: 8px;
+        padding: 2rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .address-box {
+        background-color: #111;
+        border: 1px solid #222;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .bullet-list {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .bullet-list li {
+        color: #bbb;
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .bullet-list li::before {
+        content: "❌";
+        position: absolute;
+        left: 0;
+        font-size: 0.85rem;
+    }
+
+    .bullet-list-success li::before {
+        content: "✔";
+        color: #28a745;
+    }
+</style>
+
+<div class="container mt-5 mb-5 pb-5" style="min-height: 70vh;">
+    
+    <div class="row text-center mb-5 border-bottom border-secondary pb-4">
+        <div class="col-12">
+            <div class="display-4 mb-3">🔄</div>
+            <h1 class="text-white fw-bold text-uppercase" style="letter-spacing: 2px;">
+                İptal, İade ve <span class="text-danger">Değişim Şartları</span>
+            </h1>
+            <p class="text-white-50 mt-3 fs-5" style="max-width: 800px; margin: 0 auto;">
+                Müşteri memnuniyeti <span class="text-white">SUNMED Medikal</span> için en öncelikli konulardan biridir. Ancak tedarik ettiğimiz ürünlerin büyük bir kısmı hassas laboratuvar kimyasalları, steril sarf malzemeleri ve kalibrasyon gerektiren cihazlar olduğu için, iade süreçlerinde uluslararası kalite ve güvenlik standartlarına uyulması zorunludur.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-md-6">
+            <div class="return-card" style="border-top-color: #dc3545;">
+                <div class="return-title text-danger">⚠️ 1. İade Edilemeyecek Ürünler</div>
+                <p class="return-text mb-3">
+                    Aşağıdaki niteliklere sahip ürünlerin, taşınma/saklanma koşullarının bozulma riski ve tekrar satılabilirlik özelliklerini kaybetmesi nedeniyle kesinlikle iadesi veya değişimi kabul edilmemektedir:
+                </p>
+                <ul class="bullet-list">
+                    <li>Orijinal ambalajı açılmış, emniyet bandı yırtılmış, ambalajında yırtık, aşınma, ezilme olan veya üzerine kargo etiketi yapıştırılmış kullanılmış ürünler.</li>
+                    <li><span class="text-white fw-bold">Soğuk zincir (+4°C / -20°C / -80°C)</span> gerektiren kimyasallar, biyolojik kitler ve reaktifler (Taşıma koşullarının geriye dönük izlenememesi nedeniyle).</li>
+                    <li>Sterilizasyon özelliği ve koruyucu bariyeri bozulmuş her türlü sarf malzemeleri.</li>
+                    <li>Müşteri talebine istinaden özel olarak yurt dışından ithal edilmiş veya özel olarak üretilmiş/konfigüre edilmiş ürünler.</li>
+                    <li>Son kullanma tarihi geçmiş veya iade süreci içerisinde son kullanma tarihinin geçme tehlikesi bulunan miatlı ürünler.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="return-card" style="border-top-color: #00bac6;">
+                <div class="return-title" style="color: #00bac6;">📋 2. Genel İade Koşulları</div>
+                <p class="return-text">
+                    Satın aldığınız standart ürünleri, orijinal ambalajında, hasarsız ve tekrar satılabilirlik özelliğini kaybetmemiş olmak koşulu ile teslim aldığınız tarihten itibaren <span class="text-white fw-bold">7 gün</span> içerisinde adresimize teslim etmeniz gerekmektedir.
+                </p>
+                <p class="return-text">
+                    <span class="contract-highlight">Yasal Bildirim Süresi:</span> İade talebi, ürünün teslim alındığı tarihten itibaren en geç <span class="text-white fw-bold">14 iş günü</span> içinde yazılı olarak <span class="text-white">info@sunmedikal.com</span> adresine bildirilmelidir.
+                </p>
+                <p class="return-text">
+                    Ürünün iade edilebilmesi için firmamızın <span class="text-white fw-bold">"İade Onay Formu"</span> düzenlemesi zorunludur. Firmamızdan onay formu alınmadan, habersiz olarak gönderilen kargolar depo tarafından kesinlikle teslim alınmayacak ve kabul edilmeyecektir.
+                </p>
+                <p class="return-text mb-0">
+                    Gelen ürün öncelikle İade Bölümümüz tarafından incelenir, gerekir ise ürünün yetkili teknik servisine ya da üretici/tedarikçi firmalara test edilip onaylanması için gönderilmektedir.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="return-card" style="border-top-color: #ffc107;">
+                <div class="return-title text-warning">📄 3. İade Paketinde Olması Gerekenler</div>
+                <p class="return-text">
+                    İade etmek üzere gönderdiğiniz ürünlerde aşağıdaki öğelerin eksiksiz bulunması zorunludur. Bunlardan herhangi birinin eksik olması durumunda ürün iadesi iptal edilir:
+                </p>
+                <ul class="bullet-list bullet-list-success mt-3">
+                    <li>Ürünün Orijinal Faturası (Aslı veya e-fatura çıktısı),</li>
+                    <li>İade Gerekçesini ve Sebebini Açıklayan Yazı,</li>
+                    <li>Varsa ürüne ait standart aksesuarlar, kutusu, ambalajı, garanti belgeleri ve kullanım kılavuzları eksiksiz ve hasarsız olmalıdır.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="return-card" style="border-top-color: #28a745;">
+                <div class="return-title text-success">🛡️ 4. Hasarlı ve Kusurlu Ürün Süreçleri</div>
+                <p class="return-text">
+                    <span class="contract-highlight">Kargo Kontrol Zorunluluğu:</span> Kargo teslimatı sırasında pakette ezilme, yırtılma, ıslanma veya kimyasal sızıntı/deformasyon fark ederseniz; kargoyu kesinlikle teslim almayınız. 
+                </p>
+                <p class="return-text">
+                    Kargo görevlisine anında <span class="text-white fw-bold">"Hasar Tespit Tutanağı"</span> tutturmanız gerekmektedir. Hasar tespit tutanağı tutulan durumlarda kargo teslim alınmadan doğrudan tarafımıza geri gelir.
+                </p>
+                <p class="return-text mb-0">
+                    Durumu anında iletişim kanallarımızdan firmamıza bildirmeniz halinde, yeni ürün çıkışı veya ücret iadesi süreçleri SUNMED Medikal tarafından hızla ve öncelikle sağlanacaktır. Tutanak tutulmayan kargolarda sorumluluk müşteriye ait olmaktadır.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="attention-box">
+                <h4 class="text-warning fw-bold mb-3">⚠️ DİKKAT! Kargo Ödemesi Hakkında Kurallar</h4>
+                <p class="return-text text-white mb-3">
+                    <span class="text-warning fw-bold">Cayma Hakkı Kontrolü:</span> Müşteri kaynaklı yanlış siparişlerde veya cayma hakkı kullanılarak iade edilen kusursuz ürünlerin kargo masrafları tamamen <span class="text-white fw-bold">müşteriye aittir</span>.
+                </p>
+                <p class="return-text text-white mb-3">
+                    <span class="text-success fw-bold">Ayıplı ve Kusurlu Mallar:</span> Tarafımızdan kaynaklanan hatalı gönderim (yanlış ürün, hasarlı teslimat, ayıplı mal vb.) durumlarında ise, müşterilerimiz ürünü sadece <span class="text-success fw-bold">anlaşmalı olduğumuz kargo firmaları</span> ile karşı ödemeli (ücretsiz) olarak gönderebilirler. 
+                </p>
+                <p class="return-text text-white mb-0">
+                    Anlaşmalı kargo şirketlerimiz dışındaki diğer kargo firmaları ile yapılan gönderimlerde, kargo ücreti tamamen gönderimi yapan müşteriye ait olacaktır.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="return-card" style="border-top-color: #00bac6;">
+                <div class="return-title" style="color: #00bac6;">🛑 5. Sipariş İptal Şartları</div>
+                <p class="return-text">
+                    Satın aldığınız ürünleri iptal edebilmeniz için ürünlerin <span class="text-white fw-bold">kargoya verilmeden önce</span> bize e-mail (info@sunmedikal.com) ya da telefon (0212 438 09 77) yoluyla ulaşarak onay almanız gerekmektedir. 
+                </p>
+                <p class="return-text">
+                    Ürünler paketlenip kargoya teslim edildikten sonra sipariş iptali yapılması sistem ve lojistik yönden mümkün değildir. Kargolanan siparişler için ancak "Cayma Hakkı ve İade Koşulları" hükümleri uygulanabilir.
+                </p>
+                <p class="return-text mb-0 small text-muted">
+                    * Tipografik veya sistemsel hatalar nedeniyle mantığa aykırı rakamlarla (teknik hata sonucu yanlış fiyatla girilen siparişler vb.) yapılan satışlar bağlayıcı değildir ve SUNMED Medikal tarafından tek taraflı iptal edilecektir.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="return-card" style="border-top-color: #6f42c1;">
+                <div class="return-title" style="color: #a985e5;">🏢 6. İade Kabul Depo Adresi</div>
+                <p class="return-text">
+                    İade onay formu düzenlenmiş olan ürünleri, faturası ve gerekçe yazısıyla birlikte hasar görmeyecek koruyucu bir paketle aşağıdaki İade Kabul Depo adresimize sevk etmeniz gerekmektedir:
+                </p>
+                <div class="address-box">
+                    <p class="return-text text-white fw-bold mb-1">SUNMED Medikal - Merkez Ofis / Depo</p>
+                    <p class="return-text mb-0" style="color: #ccc;">
+                        Giyimkent Sitesi 18. Sk. No:10/12 <br>
+                        34235 Esenler, İstanbul, Türkiye
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>

@@ -1,0 +1,214 @@
+@model SunmedMedikal.Models.Product
+@{
+    ViewData["Title"] = "Yeni Ürün Ekle";
+}
+
+<div class="container mt-5 mb-5" style="max-width: 800px;">
+    <div class="card border-dark shadow-sm">
+        <div class="card-header bg-dark text-white p-3">
+            <h4 class="mb-0 fw-bold">Yeni Ürün Ekle</h4>
+        </div>
+        
+        <div class="card-body p-4 bg-light">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ProductCode" class="form-label fw-bold text-dark">Ürün Kodu <span class="text-danger">*</span></label>
+                        <input asp-for="ProductCode" class="form-control border-secondary" placeholder="Örn: SM-100 Veya Sadece Rakam" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Brand" class="form-label fw-bold text-dark">Marka</label>
+                        <input asp-for="Brand" class="form-control border-secondary" placeholder="Örn: Merck, Sigma vb." />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold text-dark">Ürün Adı <span class="text-danger">*</span></label>
+                    <input asp-for="Name" class="form-control border-secondary" placeholder="Örn: Sodyum Hidroksit" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold text-dark">Kısa Ürün Açıklaması (Vitrinde Görünür)</label>
+                    <textarea asp-for="Description" class="form-control border-secondary" rows="2" placeholder="Ürünün kısa özetini buraya giriniz..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ProductInfo" class="form-label fw-bold text-dark">Ürün Bilgisi (Sekme İçeriği)</label>
+                    <textarea asp-for="ProductInfo" class="form-control border-secondary" rows="4" placeholder="Ürün özellikleri, boyut, materyal vb. detaylar..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ProductDetail" class="form-label fw-bold text-dark">Ürün Detayı / Kullanım (Sekme İçeriği)</label>
+                    <textarea asp-for="ProductDetail" class="form-control border-secondary" rows="4" placeholder="Kullanım talimatları, uyarılar veya teknik analizler..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Tags" class="form-label fw-bold text-danger">Gizli Arama Etiketleri (Müşteri Görmez)</label>
+                    <input asp-for="Tags" class="form-control border-danger" placeholder="Örn: kaymaz, şeffaf bant, zemin bandı (Virgülle ayırarak yazın)" />
+                    <small class="text-muted">Bu kelimeler sadece arama çubuğunda ürünün bulunmasını kolaylaştırır.</small>
+                </div>
+
+                <h5 class="text-dark border-bottom border-dark pb-2 mb-3 mt-4">⚙️ Ürün Ayarları</h5>
+
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <label asp-for="Category" class="form-label fw-bold text-dark">1. Ana Kategori <span class="text-danger">*</span></label>
+                        <select asp-for="Category" id="MainCategorySelect" class="form-select border-secondary" required>
+                            <option value="">-- Seç --</option>
+                                @if(ViewBag.MainCategories != null) {
+                                    foreach(var main in ViewBag.MainCategories) {
+                                        <option value="@main.Name">@main.Name</option>
+                                    }
+                                }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <label asp-for="SubCategory" class="form-label fw-bold text-dark">2. Alt Kategori</label>
+                        <select asp-for="SubCategory" id="SubCategorySelect" class="form-select border-secondary">
+                            <option value="">-- Seç --</option>
+                            @if(ViewBag.SubCategories != null) {
+                                foreach(var sub in ViewBag.SubCategories) {
+                                    <option value="@sub.Name" data-main="@sub.MainCategory">@sub.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <label asp-for="SubSubCategory" class="form-label fw-bold text-dark">3. Alt Kategori</label>
+                        <select asp-for="SubSubCategory" id="SubSubCategorySelect" class="form-select border-secondary">
+                            <option value="">-- Seç --</option>
+                                @if(ViewBag.SubSubCategories != null) {
+                                    foreach(var ss in ViewBag.SubSubCategories) {
+                                        <option value="@ss.Name" data-sub="@ss.SubCategory">@ss.Name</option>
+                                    }
+                                }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="SubSubSubCategory" class="form-label fw-bold text-dark">4. Alt Kategori</label>
+                        <select asp-for="SubSubSubCategory" id="SubSubSubCategorySelect" class="form-select border-secondary">
+                            <option value="">-- Seç --</option>
+                                @if(ViewBag.SubSubSubCategories != null) {
+                                    foreach(var sss in ViewBag.SubSubSubCategories) {
+                                        <option value="@sss.Name" data-subsub="@sss.SubSubCategory">@sss.Name</option>
+                                    }
+                                }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="SubSubSubSubCategory" class="form-label fw-bold text-danger">5. Alt Kategori</label>
+                        <select asp-for="SubSubSubSubCategory" id="SubSubSubSubCategorySelect" class="form-select border-danger">
+                            <option value="">-- Seç --</option>
+                                @if(ViewBag.SubSubSubSubCategories != null) {
+                                    foreach(var ssss in ViewBag.SubSubSubSubCategories) {
+                                        <option value="@ssss.Name" data-subsubsub="@ssss.SubSubSubCategory">@ssss.Name</option>
+                                    }
+                                }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="Price" class="form-label fw-bold text-dark">Fiyat ve Para Birimi <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input asp-for="Price" type="number" step="0.01" class="form-control border-secondary" required />
+                            <select asp-for="Currency" class="form-select border-secondary bg-dark text-white fw-bold" style="max-width: 100px;">
+                                <option value="TL">₺ (TL)</option>
+                                <option value="USD">$ (USD)</option>
+                                <option value="EUR">€ (EUR)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="StockQuantity" class="form-label fw-bold text-dark">Stok Miktarı <span class="text-danger">*</span></label>
+                        <input asp-for="StockQuantity" type="number" class="form-control border-secondary" value="100" min="0" required />
+                    </div>
+
+                    <div class="form-check form-switch mb-4 mt-3 ms-3">
+                        <input class="form-check-input bg-danger border-secondary" type="checkbox" asp-for="IsQuoteOnly" id="IsQuoteOnlySwitch" style="transform: scale(1.3); margin-right: 10px;">
+                        <label class="form-check-label fw-bold text-warning" for="IsQuoteOnlySwitch">
+                            📄 Bu ürün sadece "Kurumsal Teklif İste" sürecine tabi olsun
+                        </label>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                     <label asp-for="ImageFiles" class="form-label fw-bold text-dark">Ürün Görselleri Yükle <small class="text-danger">(Çoklu Seçim Yapabilirsiniz)</small></label>
+                     <input asp-for="ImageFiles" type="file" class="form-control border-secondary" accept="image/*" multiple />
+                    </div>
+                </div>
+
+                <hr class="border-secondary mt-2 mb-4">
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/Admin/Index" class="btn btn-outline-dark fw-bold px-4">İptal Et</a>
+                    <button type="submit" class="btn btn-danger fw-bold px-4">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#ProductInfo, #ProductDetail').summernote({
+                height: 250, 
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear', 'fontsize']], 
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']], 
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview']]
+                ],
+                fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '24', '36', '48' , '64', '82', '150'] 
+            });
+
+            // 5 KADEMELİ JİLET GİBİ BİRBİRİNE BAĞLI AÇILIR KUTU SİSTEMİ
+            $('#MainCategorySelect').change(function() {
+                var main = $(this).val();
+                $('#SubCategorySelect option').hide();
+                $('#SubCategorySelect option[value=""]').show();
+                $('#SubCategorySelect option[data-main="'+main+'"]').show();
+                $('#SubCategorySelect').val('').trigger('change');
+            });
+
+            $('#SubCategorySelect').change(function() {
+                var sub = $(this).val();
+                $('#SubSubCategorySelect option').hide();
+                $('#SubSubCategorySelect option[value=""]').show();
+                $('#SubSubCategorySelect option[data-sub="'+sub+'"]').show();
+                $('#SubSubCategorySelect').val('').trigger('change');
+            });
+
+            $('#SubSubCategorySelect').change(function() {
+                var subsub = $(this).val();
+                $('#SubSubSubCategorySelect option').hide();
+                $('#SubSubSubCategorySelect option[value=""]').show();
+                $('#SubSubSubCategorySelect option[data-subsub="'+subsub+'"]').show();
+                $('#SubSubSubCategorySelect').val('').trigger('change');
+            });
+
+            $('#SubSubSubCategorySelect').change(function() {
+                var subsubsub = $(this).val();
+                $('#SubSubSubSubCategorySelect option').hide();
+                $('#SubSubSubSubCategorySelect option[value=""]').show();
+                $('#SubSubSubSubCategorySelect option[data-subsubsub="'+subsubsub+'"]').show();
+                $('#SubSubSubSubCategorySelect').val('');
+            });
+        });
+    </script>
+}

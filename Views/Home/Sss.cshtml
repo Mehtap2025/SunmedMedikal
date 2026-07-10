@@ -1,0 +1,67 @@
+@{
+    ViewData["Title"] = "Sıkça Sorulan Sorular";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h2 class="text-white border-bottom border-danger pb-2 mb-4">❓ Sıkça Sorulan Sorular (S.S.S)</h2>
+            
+            <div class="accordion accordion-flush" id="faqAccordion">
+                
+                <div class="accordion-item bg-dark border-secondary mb-3 rounded">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button bg-dark text-white collapsed shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" style="border: 1px solid #333;">
+                            <strong>Ürünlerinizin kalite sertifikaları (CoA, MSDS) mevcut mu?</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-white-50 border-top border-secondary">
+                            Evet, portföyümüzde bulunan tüm kimyasallar ve standartlar uluslararası normlara uygundur. Siparişinizle birlikte lot numarasına ait Analiz Sertifikası (CoA) ve Güvenlik Bilgi Formu (MSDS) tarafınıza dijital veya basılı olarak iletilmektedir.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item bg-dark border-secondary mb-3 rounded">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button bg-dark text-white collapsed shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="border: 1px solid #333;">
+                            <strong>Minimum sipariş tutarı (MOQ) uygulamanız var mı?</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-white-50 border-top border-secondary">
+                            Standart sarf malzemeleri ve kimyasallar için genellikle bir minimum sipariş tutarımız bulunmamaktadır. Ancak özel üretim veya proje bazlı ithal edilecek bazı spesifik cihaz ve referans standartlarında, üretici firmanın belirlediği MOQ (Minimum Order Quantity) geçerli olabilir. Detaylar için satış ekibimizle görüşebilirsiniz.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item bg-dark border-secondary mb-3 rounded">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button bg-dark text-white collapsed shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" style="border: 1px solid #333;">
+                            <strong>Kurumsal firmalar için vadeli ödeme seçenekleriniz nelerdir?</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-white-50 border-top border-secondary">
+                            Düzenli çalıştığımız kurumsal müşterilerimize, finans departmanımızın yapacağı değerlendirme sonucunda cari hesap açılarak vadeli ödeme planları (30, 60 veya 90 gün) sunulabilmektedir. İlk alışverişlerde genellikle peşin veya kredi kartı ile işlem yapılmaktadır.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item bg-dark border-secondary rounded">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button bg-dark text-white collapsed shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" style="border: 1px solid #333;">
+                            <strong>Kargo ve teslimat süreniz ne kadar?</strong>
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-white-50 border-top border-secondary">
+                            Stoklarımızda hazır bulunan ürünler için saat 15:00'e kadar verilen siparişler aynı iş günü kargoya teslim edilir. İthal edilecek veya özel üretim gerektiren siparişlerin teslimat süreleri, teklif formunuzda açıkça belirtilmektedir. Teslimatlarımız sigortalı kargo ile yapılmaktadır.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,282 @@
+@model SunmedMedikal.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Yeni Üyelik Oluştur";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    
+    /* Sekme Butonları Animasyonları */
+    .tab-btn {
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        padding: 10px 30px;
+        font-weight: bold;
+    }
+    .tab-btn.active {
+        background-color: #dc3545;
+        color: white;
+        border-color: #dc3545;
+        box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+    }
+    .tab-btn.inactive {
+        background-color: transparent;
+        color: #6c757d;
+        border: 1px solid #6c757d;
+    }
+
+    /* Input Tasarımları */
+    .custom-input {
+        background-color: #1a1a1a !important;
+        border: 1px solid #333 !important;
+        color: #fff !important;
+    }
+    .custom-input:focus {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
+
+    /* Şifre Güç Barı Tasarımı */
+    .password-strength-bar {
+        height: 6px;
+        border-radius: 3px;
+        background-color: #333;
+        margin-top: 8px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+    .strength-fill {
+        height: 100%;
+        width: 0%;
+        transition: width 0.4s ease, background-color 0.4s ease;
+    }
+</style>
+
+<div class="container mt-5 mb-5" style="min-height: 80vh; display: flex; align-items: center;">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-7">
+            
+            <div class="card shadow-lg" style="background-color: #0a0a0a; border: 1px solid #222; border-top: 4px solid #dc3545; border-radius: 12px;">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0 text-center">
+                    <h3 class="fw-bold text-white text-uppercase" style="letter-spacing: 1px;">SİSTEME <span class="text-danger">KAYIT OL</span></h3>
+                    <p class="text-white-50 small">Siparişlerinizi ve tekliflerinizi yönetmek için hesap oluşturun</p>
+                </div>
+
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger mx-4 mt-3 text-center fw-bold shadow-sm">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
+
+                <div class="card-body p-4 p-md-5 pt-3">
+                    
+                    <div class="d-flex justify-content-center gap-3 mb-5">
+                        <button type="button" id="btn-bireysel" class="btn tab-btn active" onclick="setAccountType('Bireysel')">👤 Bireysel Kayıt</button>
+                        <button type="button" id="btn-kurumsal" class="btn tab-btn inactive" onclick="setAccountType('Kurumsal')">🏢 Kurumsal Kayıt</button>
+                    </div>
+
+                    <form asp-controller="Account" asp-action="Register" method="post" id="registerForm">
+                        
+                        <input type="hidden" asp-for="AccountType" id="AccountType" value="Bireysel" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">Sisteme Giriş Adınız <span class="text-danger">*</span></label>
+                                <input asp-for="Username" class="form-control custom-input" placeholder="Kullanıcı adı belirleyin" required />
+                                <span asp-validation-for="Username" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">E-Posta Adresiniz <span class="text-danger">*</span></label>
+                                <input asp-for="Email" type="email" class="form-control custom-input" placeholder="ornek@mail.com" required />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-danger" id="lbl-fullname">Adı Soyadı <span class="text-white">*</span></label>
+                                <input asp-for="FullName" class="form-control custom-input" placeholder="Adınız Soyadınız" required />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">Telefon Numarası <span class="text-danger">*</span></label>
+                                <input asp-for="PhoneNumber" id="PhoneNumber" class="form-control custom-input" placeholder="+905XXXXXXXXX" required />
+                                <small class="text-white-50">Örn: +905554443322</small>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div id="kurumsal-fields" style="display: none; background-color: #111; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 3px solid #dc3545;">
+                            <h6 class="text-danger fw-bold mb-3">Firma Bilgileri</h6>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-white">Firma Ünvanı</label>
+                                <input asp-for="CompanyTitle" class="form-control custom-input" placeholder="Örn: SUNMED Medikal San. ve Tic. Ltd. Şti." />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-white">Firma Adı <span class="text-danger">*</span></label>
+                                <input asp-for="CompanyName" id="CompanyName" class="form-control custom-input" placeholder="Kısa Firma Adı" />
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-white">Vergi Dairesi <span class="text-danger">*</span></label>
+                                    <input asp-for="TaxOffice" id="TaxOffice" class="form-control custom-input" placeholder="Bağlı Olunan V.D." />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-white">Vergi Numarası <span class="text-danger">*</span></label>
+                                    <input asp-for="TaxNumber" id="TaxNumber" class="form-control custom-input" placeholder="10 Haneli Vergi No" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="bireysel-fields" class="mb-3">
+                            <label class="form-label fw-bold text-white">TC Kimlik Numarası</label>
+                            <input asp-for="TCKimlikNo" class="form-control custom-input" placeholder="Zorunlu Değil" maxlength="11" />
+                        </div>
+
+                        <hr class="border-secondary my-4">
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-white">Şifreniz <span class="text-danger">*</span></label>
+    
+                            <div class="input-group">
+                                <input asp-for="Password" type="password" id="passwordInput" class="form-control custom-input border-end-0" placeholder="En az 6 karakter (Harf ve Sayı içermeli)" required />
+                                <button class="btn border border-start-0" type="button" id="togglePassword" style="background-color: #1a1a1a; border-color: #333 !important; color: #aaa;">
+                                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                                    </svg>
+                                </button>
+                            </div>
+    
+                            <div class="password-strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-white-50" id="strengthText">Şifre Gücü</small>
+                                <small class="text-white-50">Zayıf - Orta - Güçlü</small>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                        
+                        <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm mb-3" style="border-radius: 30px;">Hesabımı Oluştur</button>
+                        
+                        <div class="text-center mt-3">
+                            <a asp-controller="Account" asp-action="Login" class="text-white-50 text-decoration-none small">Zaten hesabınız var mı? <span class="text-white fw-bold">Giriş Yapın</span></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // --- 1. SEKMELERİ (BİREYSEL/KURUMSAL) DEĞİŞTİRME MANTIĞI ---
+        function setAccountType(type) {
+            document.getElementById('AccountType').value = type;
+            
+            let btnBireysel = document.getElementById('btn-bireysel');
+            let btnKurumsal = document.getElementById('btn-kurumsal');
+            let fieldsKurumsal = document.getElementById('kurumsal-fields');
+            let fieldsBireysel = document.getElementById('bireysel-fields');
+            let lblFullname = document.getElementById('lbl-fullname');
+
+            // Formdaki zorunlu alan kutuları
+            let reqCompany = document.getElementById('CompanyName');
+            let reqTaxOffice = document.getElementById('TaxOffice');
+            let reqTaxNumber = document.getElementById('TaxNumber');
+
+            if (type === 'Bireysel') {
+                btnBireysel.className = "btn tab-btn active";
+                btnKurumsal.className = "btn tab-btn inactive";
+                
+                fieldsBireysel.style.display = 'block';
+                fieldsKurumsal.style.display = 'none';
+                lblFullname.innerHTML = 'Adı Soyadı <span class="text-white">*</span>';
+
+                // Kurumsal alanların zorunluluğunu kaldır (Form rahatça gönderilsin)
+                reqCompany.required = false;
+                reqTaxOffice.required = false;
+                reqTaxNumber.required = false;
+            } else {
+                btnKurumsal.className = "btn tab-btn active";
+                btnBireysel.className = "btn tab-btn inactive";
+                
+                fieldsKurumsal.style.display = 'block';
+                fieldsBireysel.style.display = 'none';
+                lblFullname.innerHTML = 'Yetkili Adı Soyadı <span class="text-white">*</span>';
+
+                // Kurumsal alanları zorunlu yap
+                reqCompany.required = true;
+                reqTaxOffice.required = true;
+                reqTaxNumber.required = true;
+            }
+        }
+
+        // --- 2. TELEFON NUMARASI SABİTLEYİCİ (+90) ---
+        document.getElementById('PhoneNumber').addEventListener('input', function (e) {
+            let val = e.target.value;
+            // Eğer kullanıcı sildiyse veya +90 ile başlamıyorsa zorla ekle
+            if (!val.startsWith('+90')) {
+                e.target.value = '+90' + val.replace(/[^0-9]/g, '');
+            }
+        });
+
+        // --- 3. ŞİFRE GÜÇ BARI HESAPLAYICI ---
+        document.getElementById('passwordInput').addEventListener('input', function (e) {
+            let pass = e.target.value;
+            let fill = document.getElementById('strengthFill');
+            let text = document.getElementById('strengthText');
+            
+            let strength = 0;
+            
+            if (pass.length >= 6) strength += 33; // Uzunluk puanı
+            if (/[a-zA-Z]/.test(pass)) strength += 33; // Harf puanı
+            if (/[0-9]/.test(pass)) strength += 34; // Sayı puanı
+            
+            // Eğer özel karakter varsa tam 100 yap
+            if (/[!@@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(pass)) strength = 100;
+
+            // Barın Genişliğini Ayarla
+            fill.style.width = strength + '%';
+
+            // Renk ve Yazı Ayarı
+            if (pass.length === 0) {
+                fill.style.width = '0%';
+                text.innerText = 'Şifre Gücü';
+            } else if (strength < 50) {
+                fill.style.backgroundColor = '#dc3545'; // Kırmızı (Zayıf)
+                text.innerText = 'Zayıf';
+                text.style.color = '#dc3545';
+            } else if (strength < 90) {
+                fill.style.backgroundColor = '#ffc107'; // Sarı (Orta)
+                text.innerText = 'Orta';
+                text.style.color = '#ffc107';
+            } else {
+                fill.style.backgroundColor = '#198754'; // Yeşil (Güçlü)
+                text.innerText = 'Güçlü';
+                text.style.color = '#198754';
+            }
+        });
+
+        // --- 4. ŞİFRE GÖSTER/GİZLE MANTIĞI ---
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            let pwdInput = document.getElementById('passwordInput');
+            let type = pwdInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            pwdInput.setAttribute('type', type);
+    
+            // Tıklandığında ikonun rengini kırmızı yaparak "Açık" hissi verelim
+            this.style.color = type === 'text' ? '#dc3545' : '#aaa';
+        });
+    </script>
+}

@@ -1,0 +1,71 @@
+@model IEnumerable<SunmedMedikal.Models.SubCategory>
+@{
+    ViewData["Title"] = "Alt Kategorileri Yönet";
+}
+
+<div class="container mt-5 mb-5" style="max-width: 950px;">
+    
+    <div class="card border-danger shadow-sm mb-5">
+        <div class="card-header bg-danger text-white p-3">
+            <h5 class="mb-0 fw-bold">➕ Yeni Alt Kategori Ekle</h5>
+        </div>
+        <div class="card-body p-4 bg-light">
+            <form asp-action="AddSubCategory" method="post" class="row align-items-end">
+                <div class="col-md-5 mb-3 mb-md-0">
+                    <label class="form-label fw-bold text-dark">Hangi Ana Kategoriye Eklenecek?</label>
+                    <select name="MainCategory" class="form-select border-secondary" required>
+                        <option value="">-- Ana Kategori Seç --</option>
+                        @if(ViewBag.MainCategories != null) { foreach(var main in ViewBag.MainCategories) { <option value="@main.Name">@main.Name</option> } }
+                    </select>
+                </div>
+                <div class="col-md-5 mb-3 mb-md-0">
+                    <label class="form-label fw-bold text-dark">Alt Kategori Adı Ne Olacak?</label>
+                    <input type="text" name="Name" class="form-control border-secondary" placeholder="Örn: Balon Jojeler" required />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-dark shadow-sm">
+        <div class="card-header bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">📋 Mevcut Alt Kategoriler</h5>
+            <span class="badge bg-danger fs-6">Toplam: @Model.Count()</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" class="ps-4">Bağlı Olduğu Ana Kategori</th>
+                            <th scope="col">Alt Kategori Adı</th>
+                            <th scope="col" class="text-end pe-4">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="3" class="text-center py-4 text-muted fw-bold">Henüz eklenmiş bir alt kategori bulunmuyor.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.OrderBy(m => m.MainCategory).ThenBy(m => m.Name))
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-secondary">@item.MainCategory</td>
+                                    <td class="fw-bold text-dark fs-6">@item.Name</td>
+                                    <td class="text-end pe-4">
+                                        <a href="/Admin/EditSubCategory/@item.Id" class="btn btn-sm btn-primary fw-bold me-2">✏️ Düzenle</a>
+                                        <a href="/Admin/DeleteSubCategory/@item.Id" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('@item.Name kategorisini silmek istediğinize emin misiniz?')">🗑️ Sil</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

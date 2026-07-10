@@ -1,0 +1,218 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SunmedMedikal.Models.SharedResource> SharedLocalizer
+@inject SunmedMedikal.Data.ApplicationDbContext _context
+@model List<SunmedMedikal.Models.Product>
+@{
+    ViewData["Title"] = SharedLocalizer["Anasayfa"];
+}
+
+<style>
+    body { background-color: #050505 !important; }
+</style>
+
+<div id="sunmedCarousel" class="carousel slide shadow-lg mb-5" data-bs-ride="carousel" style="border-bottom: 3px solid #dc3545;">
+    
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#sunmedCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+        <button type="button" data-bs-target="#sunmedCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#sunmedCarousel" data-bs-slide-to="2"></button>
+    </div>
+
+    <div class="carousel-inner" style="height: 60vh; background-color: #000;">
+        <div class="carousel-item active h-100">
+            <div class="d-block w-100 h-100" style="background: linear-gradient(rgba(5, 5, 5, 0.8), rgba(5, 5, 5, 0.8)), url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=2070&auto=format&fit=crop') center/cover;"></div>
+            <div class="carousel-caption d-flex flex-column justify-content-center h-100" style="bottom: 0;">
+                <h1 class="display-4 fw-bold text-white text-uppercase" style="letter-spacing: 2px;">
+                    @SharedLocalizer["Laboratuvarınız İçin"] <span class="text-danger">@SharedLocalizer["Güvenilir"]</span> @SharedLocalizer["Çözümler"]
+                </h1>
+                <p class="fs-5 text-white-50 mt-3 mb-4">@SharedLocalizer["Kimyasallar, cam malzemeler ve ileri teknoloji cihazlarda sektörün öncüsü."]</p>
+                <div>
+                    <!-- DÜZELTME 1: Buton artık "Kimyasallar" sayfasına gitmiyor, dinamik kategorilere kayıyor -->
+                    <a href="#kategoriler" class="btn btn-danger btn-lg px-5 fw-bold shadow" style="border-radius: 30px;">@SharedLocalizer["Ürünleri İncele"]</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. SLAYT (KİMYASALLAR VE TEKLİF) -->
+        <div class="carousel-item h-100">
+            <div class="d-block w-100 h-100" style="background: linear-gradient(rgba(5, 5, 5, 0.8), rgba(5, 5, 5, 0.8)), url('https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?q=80&w=2070&auto=format&fit=crop') center/cover;"></div>
+            <div class="carousel-caption d-flex flex-column justify-content-center h-100" style="bottom: 0;">
+                <h1 class="display-4 fw-bold text-white text-uppercase" style="letter-spacing: 2px;">
+                    @SharedLocalizer["ANALİTİK VE TEKNİK"] <span class="text-danger">CHEMICALS</span>
+                </h1>
+                <p class="fs-5 text-white-50 mt-3 mb-4">@SharedLocalizer["Dünya standartlarında, sertifikalı ve yüksek saflıkta kimyasal portföyü."]</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <!-- Ürünlere gitmek isteyenler için -->
+                    <a href="/Product/Category?main=@Uri.EscapeDataString("Laboratuvar Kimyasalları")" class="btn  btn-outline-light btn-lg px-4 fw-bold shadow" style="border-radius: 30px; transition: all 0.3s ease;">
+                        🧪 @SharedLocalizer["Ürünleri Gör"]
+                    </a>
+                    <!-- Teklif istemek için iletişim sayfasına yönlendiren kurumsal buton -->
+                    <a href="/Home/Contact" class="btn btn-danger btn-lg px-4 fw-bold shadow" style="border-radius: 30px; transition: all 0.3s ease;">
+                        ✉️ @SharedLocalizer["Hemen Teklif İste"]
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="carousel-item h-100">
+            <div class="d-block w-100 h-100" style="background: linear-gradient(rgba(5, 5, 5, 0.8), rgba(5, 5, 5, 0.8)), url('https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=2079&auto=format&fit=crop') center/cover;"></div>
+            <div class="carousel-caption d-flex flex-column justify-content-center h-100" style="bottom: 0;">
+                <h1 class="display-4 fw-bold text-white text-uppercase" style="letter-spacing: 2px;">
+                    @SharedLocalizer["Uluslararası"] <span class="text-danger">@SharedLocalizer["Referans Standartları"]</span>
+                </h1>
+                <p class="fs-5 text-white-50 mt-3 mb-4">@SharedLocalizer["USP, EP, BP ve analitik standartlarda hızlı ve güvenilir tedarik ağı."]</p>
+                <div>
+                    <!-- Burası dinamik kategori altyapısına bağlandı -->
+                    <a href="/Product/Category?main=Referans%20Standartları" class="btn btn-outline-light btn-lg px-5 fw-bold shadow" style="border-radius: 30px;">@SharedLocalizer["Standartları Gör"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#sunmedCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1) grayscale(100%) brightness(200%);"></span></button>
+    <button class="carousel-control-next" type="button" data-bs-target="#sunmedCarousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1) grayscale(100%) brightness(200%);"></span></button>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; border-top: 3px solid #dc3545; transition: transform 0.3s;">
+                <div class="card-body p-4">
+                    <div class="display-5 mb-3">🔬</div>
+                    <h4 class="text-white fw-bold">@SharedLocalizer["Geniş Ürün Yelpazesi"]</h4>
+                    <p class="text-white-50 small mt-3">@SharedLocalizer["Sarf malzemelerden referans standartlarına kadar laboratuvarınızın tüm ihtiyaçlarını tek noktadan karşılıyoruz."]</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; border-top: 3px solid #dc3545; transition: transform 0.3s;">
+                <div class="card-body p-4">
+                    <div class="display-5 mb-3">⚙️</div>
+                    <h4 class="text-white fw-bold">@SharedLocalizer["Yüksek Kalite"]</h4>
+                    <p class="text-white-50 small mt-3">@SharedLocalizer["Sektörün öncü markaları ve sertifikalı ürünlerle analizlerinizde güvenilir sonuçlar elde etmenizi sağlıyoruz."]</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; border-top: 3px solid #dc3545; transition: transform 0.3s;">
+                <div class="card-body p-4">
+                    <div class="display-5 mb-3">🤝</div>
+                    <h4 class="text-white fw-bold">@SharedLocalizer["Profesyonel Destek"]</h4>
+                    <p class="text-white-50 small mt-3">@SharedLocalizer["Satış öncesi teknik danışmanlık ve satış sonrası uzman ekibimizle her zaman yanınızdayız."]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- DÜZELTME 2 & 3: TAMAMEN DİNAMİK "HIZLI KATEGORİLER" -->
+<!-- ======================================================== -->
+<div class="container mb-5" id="kategoriler" style="scroll-margin-top: 130px;">
+    <div class="row text-center mb-4">
+        <div class="col-12">
+            <h3 class="text-white fw-bold text-uppercase" style="letter-spacing: 1px;">@SharedLocalizer["Hızlı"] <span class="text-danger">@SharedLocalizer["Kategoriler"]</span></h3>
+            <div style="width: 50px; height: 3px; background-color: #dc3545; margin: 10px auto;"></div>
+        </div>
+    </div>
+    <div class="row justify-content-center g-3">
+        @{
+            // Veritabanından (SQL) tüm Ana Kategorileri alfabetik olarak çekiyoruz
+            var anaKategoriler = _context.MainCategories.OrderBy(m => m.Name).ToList();
+            
+            // Eğer veritabanı boşsa geçici bir mesaj çıksın
+            if(!anaKategoriler.Any())
+            {
+                <div class="col-12 text-center text-white-50">Henüz kategori eklenmemiş.</div>
+            }
+            else
+            {
+                // Her bir kategori için otomatik buton oluşturuyoruz
+                foreach(var kategori in anaKategoriler)
+                {
+                    <div class="col-auto">
+                        <a href="/Product/Category?main=@Uri.EscapeDataString(kategori.Name)" class="btn btn-outline-light px-4 py-2" style="border-radius: 20px; transition: all 0.3s ease;">
+                            📌 @kategori.Name
+                        </a>
+                    </div>
+                }
+            }
+        }
+    </div>
+</div>
+<!-- ======================================================== -->
+
+<!-- KURUMSAL SÖZLEŞMELER VE POLİTİKALAR BÖLÜMÜ -->
+<div class="container mb-5 pb-5 mt-5">
+    <div class="row text-center mb-4">
+        <div class="col-12">
+            <h3 class="text-white fw-bold text-uppercase" style="letter-spacing: 1px;"><span class="text-danger">Kurumsal</span> Sözleşmeler</h3>
+            <div style="width: 50px; height: 3px; background-color: #dc3545; margin: 10px auto;"></div>
+        </div>
+    </div>
+    <div class="row g-4 justify-content-center">
+        <!-- Kart 1: Gizlilik ve Güvenlik -->
+        <div class="col-md-2 col-sm-4 col-6">
+            <a href="/Home/GizlilikPolitikası" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; transition: transform 0.3s; border-radius: 12px;">
+                    <div class="card-body p-3">
+                        <div class="display-6 mb-2 text-danger">🔒</div>
+                        <h6 class="text-white fw-bold mt-2" style="font-size: 0.85rem;">Gizlilik ve Güvenlik</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Kart 2: Mesafeli Satış -->
+        <div class="col-md-2 col-sm-4 col-6">
+            <a href="/Home/MesafeliSatis" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; transition: transform 0.3s; border-radius: 12px;">
+                    <div class="card-body p-3">
+                        <div class="display-6 mb-2 text-danger">🤝</div>
+                        <h6 class="text-white fw-bold mt-2" style="font-size: 0.85rem;">Mesafeli Satış</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Kart 3: İptal ve İade -->
+        <div class="col-md-2 col-sm-4 col-6">
+            <a href="/Home/IadeSartlari" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; transition: transform 0.3s; border-radius: 12px;">
+                    <div class="card-body p-3">
+                        <div class="display-6 mb-2 text-danger">🔄</div>
+                        <h6 class="text-white fw-bold mt-2" style="font-size: 0.85rem;">İptal ve İade</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Kart 4: Ödeme ve Teslimat -->
+        <div class="col-md-2 col-sm-4 col-6">
+            <a href="/Home/OdemeTeslimat" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; transition: transform 0.3s; border-radius: 12px;">
+                    <div class="card-body p-3">
+                        <div class="display-6 mb-2 text-danger">🚚</div>
+                        <h6 class="text-white fw-bold mt-2" style="font-size: 0.85rem;">Ödeme Teslimat</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Kart 5: Çerez Politikası -->
+        <div class="col-md-2 col-sm-4 col-6">
+            <a href="/Home/CerezPolitikası" class="text-decoration-none">
+                <div class="card h-100 text-center shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; transition: transform 0.3s; border-radius: 12px;">
+                    <div class="card-body p-3">
+                        <div class="display-6 mb-2 text-danger">🍪</div>
+                        <h6 class="text-white fw-bold mt-2" style="font-size: 0.85rem;">Çerez Politikası</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Sözleşme kartlarının hover efekti */
+    .text-decoration-none .card:hover {
+        transform: translateY(-5px) !important;
+        border-color: #dc3545 !important;
+        box-shadow: 0 10px 20px rgba(220, 53, 69, 0.1) !important;
+    }
+</style>

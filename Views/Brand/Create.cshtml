@@ -1,0 +1,41 @@
+@model SunmedMedikal.Models.Brand
+@{
+    ViewData["Title"] = "Yeni Marka Ekle";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            <div class="card shadow-lg" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; border-top: 4px solid #dc3545; border-radius: 12px;">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0 text-center">
+                    <h3 class="fw-bold text-white text-uppercase" style="letter-spacing: 1px;">YENİ <span class="text-danger">MARKA EKLE</span></h3>
+                    <p class="text-white-50 small">Sisteme yeni bir tedarikçi markası ve logosunu tanımlayın.</p>
+                </div>
+                
+                <div class="card-body p-5">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-bold text-danger">Marka Adı</label>
+                            <input asp-for="Name" class="form-control form-control-lg bg-dark text-white border-secondary" placeholder="Örn: EPPENDORF" required />
+                        </div>
+
+                        <div class="mb-5">
+                            <label asp-for="ImageFile" class="form-label fw-bold text-danger">Marka Logosu</label>
+                            <input type="file" asp-for="ImageFile" class="form-control form-control-lg bg-dark text-white border-secondary" accept="image/*" />
+                            <small class="text-muted mt-2 d-block">Logoyu bilgisayarınızdan seçin. Sistem otomatik olarak <strong>wwwroot/images/brands</strong> klasörüne yükleyecektir.</small>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-light btn-lg px-4 me-md-2" style="border-radius: 30px;">İptal</a>
+                            <button type="submit" class="btn btn-danger btn-lg px-5 fw-bold shadow-sm" style="border-radius: 30px;">Kaydet</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

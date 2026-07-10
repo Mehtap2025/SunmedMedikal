@@ -1,0 +1,73 @@
+@model List<SunmedMedikal.Models.Brand>
+@{
+    ViewData["Title"] = "Markalarımız";
+}
+
+<div class="container-fluid py-5" style="background-color: #050505; border-bottom: 2px solid #1a1a1a;">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold text-uppercase" style="color: #ffffff; letter-spacing: 2px;">
+                    Çalıştığımız <span class="text-danger">Markalar</span>
+                </h2>
+                <div style="width: 60px; height: 4px; background-color: #dc3545; margin: 15px auto;"></div>
+                <p class="fs-5 mt-4" style="color: rgba(255, 255, 255, 0.6);">
+                    Sektörün dünyaca ünlü, güvenilir ve sertifikalı öncü markalarıyla çalışarak laboratuvarınıza her zaman en kaliteli çözümleri sunuyoruz.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5 pb-5">
+    
+    @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <div class="row mb-4">
+            <div class="col-12 text-end">
+                <a asp-controller="Brand" asp-action="Create" class="btn btn-outline-danger fw-bold shadow-sm" style="border-radius: 20px;">
+                    + Yeni Marka Ekle
+                </a>
+            </div>
+        </div>
+    }
+
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var brand in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm brand-card" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; border-bottom: 3px solid transparent; transition: all 0.3s ease; border-radius: 12px; overflow: hidden;">
+                    
+                    <div class="p-4 d-flex justify-content-center align-items-center" style="background-color: #ffffff; height: 160px;">
+                        <img src="@brand.ImageUrl" alt="@brand.Name" class="img-fluid" style="max-height: 100px; object-fit: contain; filter: grayscale(100%); transition: filter 0.3s ease;" onmouseover="this.style.filter='grayscale(0%)'" onmouseout="this.style.filter='grayscale(100%)'">
+                    </div>
+                    <div class="card-body text-center p-3">
+                        <h6 class="fw-bold mb-0 text-white" style="letter-spacing: 1px;">@brand.Name</h6>
+                        
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <div class="d-flex justify-content-center gap-2 mt-3">
+                                <a asp-action="Edit" asp-route-id="@brand.Id" class="btn btn-sm btn-outline-light" style="font-size: 0.8rem;">✏️ Düzenle</a>
+                                
+                                <form asp-action="Delete" asp-route-id="@brand.Id" method="post" onsubmit="return confirm('Bu markayı silmek istediğinize emin misiniz?');">
+                                    <button type="submit" class="btn btn-sm btn-danger" style="font-size: 0.8rem;">🗑️ Sil</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+<style>
+    /* Kartın üzerine gelince hafif yukarı kalkıp altı kırmızı çizili olur */
+    .brand-card:hover {
+        transform: translateY(-8px);
+        border-bottom: 3px solid #dc3545 !important;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important;
+    }
+</style>

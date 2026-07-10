@@ -1,0 +1,85 @@
+@model List<SunmedMedikal.Models.Product>
+@{
+    ViewData["Title"] = "Ürün Yönetimi";
+}
+
+<div class="container mt-5 mb-5" style="min-height: 60vh;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Ürün Yönetim Paneli</h2>
+        <div>
+            <a href="/Admin/Create" class="btn btn-danger fw-bold shadow-sm me-2">+ Yeni Ürün Ekle</a>
+            <a href="/Account/Logout" class="btn btn-outline-dark fw-bold shadow-sm">Çıkış Yap 🔒</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4 border-secondary">
+        <div class="card-body bg-light">
+            <form asp-action="Index" method="get" class="d-flex align-items-center">
+                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control me-3 border-secondary" placeholder="🔍 Ürün Adı veya Ürün Kodu ile ara..." />
+                <button type="submit" class="btn btn-danger fw-bold px-4 shadow-sm">Ara</button>
+                <a href="/Admin/Index" class="btn btn-outline-dark fw-bold ms-2 shadow-sm">Temizle</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-secondary shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col" class="ps-4">ID</th>
+                        <th scope="col">Ürün Kodu</th>
+                        <th scope="col">Görsel</th>
+                        <th scope="col">Marka</th>
+                        <th scope="col">Ürün Adı</th>
+                        <th scope="col" class="text-center">Stok</th>
+                        <th scope="col">Fiyat</th>
+                        <th scope="col" class="text-end pe-4">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="urun-@item.Id">
+                            <td class="ps-4 align-middle fw-bold text-muted">@item.Id</td>
+                            <td class="align-middle fw-bold text-secondary">@(item.ProductCode ?? "-")</td>
+                            <td class="align-middle">
+                                <img src="@item.ImageUrl" alt="@item.Name" style="height: 40px; width: 60px; object-fit: cover;" class="rounded border bg-white p-1">
+                            </td>
+                            <td class="align-middle fw-bold text-primary">@(item.Brand ?? "-")</td>
+                            <td class="align-middle fw-bold text-dark">@item.Name</td>
+                            
+                            <td class="align-middle text-center fw-bold">
+                                @if(item.StockQuantity <= 0)
+                                {
+                                    <span class="text-danger">0</span>
+                                }
+                                else
+                                {
+                                    <span class="text-dark">@item.StockQuantity</span>
+                                }
+                            </td>
+
+                            <td class="align-middle">
+                                @if (item.IsQuoteOnly)
+                                {
+                                    <span class="text-danger fw-bold">0,00 @item.Currency</span>
+                                    <span class="badge bg-warning text-dark border border-dark ms-2 fw-bold shadow-sm">📄 Teklif İste</span>
+                                }
+                                else
+                                {
+                                    <span class="text-success fw-bold">@item.Price.ToString("N2") @item.Currency</span>
+                                }
+                            </td>
+
+                            <td class="text-end pe-4 align-middle">
+                                <a href="/Admin/Edit/@item.Id" class="btn btn-sm btn-outline-secondary me-2 fw-bold">Düzenle</a>
+                                <a href="/Admin/Delete/@item.Id" class="btn btn-sm btn-outline-danger" onclick="return confirm('@item.Name adlı ürünü silmek istediğinize emin misiniz?');">Sil</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

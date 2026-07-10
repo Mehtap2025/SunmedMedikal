@@ -1,0 +1,430 @@
+@{
+    ViewData["Title"] = "Güvenli Ödeme ve Onay";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    
+    .checkout-card {
+        background-color: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-radius: 12px;
+        padding: 30px;
+    }
+    
+    .form-control-custom, .form-select-custom {
+        background-color: #121212 !important;
+        border: 1px solid #333 !important;
+        color: #fff !important;
+    }
+    
+    .form-control-custom:focus, .form-select-custom:focus {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+
+    .payment-box {
+        background-color: #161616;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 20px;
+        display: none; 
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container mt-5 mb-5" style="min-height: 75vh;">
+    
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="fw-bold text-uppercase" style="color: #ffffff; letter-spacing: 2px;">
+                GÜVENLİ <span class="text-danger">ÖDEME VE ONAY</span>
+            </h2>
+            <p class="text-white-50">Siparişinizi veya kurumsal teklif talebinizi tamamlamak için lütfen bilgilerinizi girin.</p>
+        </div>
+    </div>
+
+    <div class="row g-5">
+        
+        <div class="col-lg-8">
+            <div class="checkout-card shadow-lg" style="border-top: 3px solid #dc3545;">
+                <h4 class="text-white fw-bold mb-4">Teslimat & Fatura Bilgileri</h4>
+                
+                @if (TempData["CartWarning"] != null)
+                {
+                    <div class="alert alert-danger fw-bold shadow-sm rounded mb-4">
+                        ⚠️ @TempData["CartWarning"]
+                    </div>
+                }
+                
+                <form id="checkoutForm" asp-controller="Cart" asp-action="PlaceOrder" method="post" enctype="multipart/form-data">
+    
+                    <h5 class="text-white fw-bold mb-3 border-bottom border-secondary pb-2">1. Teslimat Bilgileri</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-white-50 small">Adınız Soyadınız / Firma Ünvanı <span class="text-danger">*</span></label>
+                            <input type="text" name="FullName" class="form-control form-control-custom" value="@ViewBag.CurrentUser?.FullName" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-white-50 small">İrtibat Numarası <span class="text-danger">*</span></label>
+                            <input type="text" name="Phone" class="form-control form-control-custom" value="@ViewBag.CurrentUser?.PhoneNumber" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-white-50 small">İl / Şehir <span class="text-danger">*</span></label>
+                            <select id="CitySelect" name="City" class="form-select form-select-custom mb-2" required>
+                                <option value="">Şehir Seçiniz...</option>
+                            </select>
+                            <input type="text" id="CityManual" name="CityManual" class="form-control form-control-custom" placeholder="Lütfen İl Yazınız..." style="display: none;" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-white-50 small">İlçe <span class="text-danger">*</span></label>
+                            <select id="DistrictSelect" name="District" class="form-select form-select-custom mb-2" required>
+                                <option value="">Önce Şehir Seçiniz</option>
+                            </select>
+                            <input type="text" id="DistrictManual" name="DistrictManual" class="form-control form-control-custom" placeholder="Lütfen İlçe Yazınız..." style="display: none;" />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-white-50 small">Açık Teslimat Adresi <span class="text-danger">*</span></label>
+                        <textarea name="Address" class="form-control form-control-custom" rows="3" placeholder="Mahalle, Cadde, Sokak, Bina No..." required>@ViewBag.CurrentUser?.Address</textarea>
+                    </div>
+
+                    <h5 class="text-white fw-bold mb-3 mt-4 border-bottom border-secondary pb-2">2. Fatura Bilgileri</h5>
+    
+                    @if(ViewBag.CurrentUser?.CustomerType == "Kurumsal")
+                    {
+                        <div class="alert bg-dark border-secondary text-white-50 mb-3 small">
+                            <i class="fw-bold text-danger">Kurumsal Müşteri:</i> Faturanız sistemdeki vergi bilgilerinize kesilecektir.
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-white-50 small">Vergi Dairesi</label>
+                                <input type="text" name="TaxOffice" class="form-control form-control-custom" value="@ViewBag.CurrentUser?.TaxOffice" readonly />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-white-50 small">Vergi Numarası</label>
+                                <input type="text" name="TaxNumber" class="form-control form-control-custom" value="@ViewBag.CurrentUser?.TaxNumber" readonly />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small">TC Kimlik Numarası (E-Fatura Zorunluluğu)</label>
+                            <input type="text" name="TcNo" class="form-control form-control-custom" value="@ViewBag.CurrentUser?.TcNo" placeholder="11 Haneli TC Kimlik Numaranız" maxlength="11" />
+                        </div>
+                    }
+
+                    <h5 class="text-white fw-bold mb-3 mt-4 border-bottom border-secondary pb-2">3. Ödeme Yöntemi</h5>
+                    <div class="d-flex gap-4 mb-3">
+                        <div class="form-check custom-radio">
+                            <input class="form-check-input payment-radio" type="radio" name="PaymentMethod" id="havale" value="Havale/EFT" checked>
+                            <label class="form-check-label text-white fw-bold" for="havale" style="cursor:pointer;">
+                                🏦 Havale / EFT
+                            </label>
+                        </div>
+                        <div class="form-check custom-radio">
+                            <input class="form-check-input payment-radio" type="radio" name="PaymentMethod" id="krediKarti" value="Kredi Kartı">
+                            <label class="form-check-label text-white fw-bold" for="krediKarti" style="cursor:pointer;">
+                                💳 Kredi Kartı
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="havale-box" class="payment-box" style="display: block;">
+                        <h6 class="text-white mb-3 border-bottom border-secondary pb-2">Banka Hesap Bilgilerimiz</h6>
+                        <p class="text-white-50 small mb-3">Alıcı: <strong class="text-white">SUNMED Medikal ve Global Laboratuvar San. Tic. Ltd. Şti.</strong></p>
+    
+                        <div class="row g-3">
+                            <div class="col-12 border-bottom border-secondary pb-2 mb-2">
+                                <span class="text-danger fw-bold small d-block">TÜRKİYE İŞ BANKASI</span>
+                                <code class="text-warning fw-bold fs-6" style="background: transparent;">TR22 0006 4000 0011 0701 1124 12</code>
+                            </div>
+                            <div class="col-12 border-bottom border-secondary pb-2 mb-2">
+                                <span class="text-danger fw-bold small d-block">GARANTİ BANKASI</span>
+                                <code class="text-warning fw-bold fs-6" style="background: transparent;">TR49 0006 2001 1200 0006 2919 64</code>
+                            </div>
+                            <div class="col-12 border-bottom border-secondary pb-2 mb-2">
+                                <span class="text-danger fw-bold small d-block">QNB FİNANSBANK</span>
+                                <code class="text-warning fw-bold fs-6" style="background: transparent;">TR82 0015 7000 0000 0145 5492 76</code>
+                            </div>
+                            <div class="col-12">
+                                <span class="text-danger fw-bold small d-block">KUVEYTTÜRK</span>
+                                <code class="text-warning fw-bold fs-6" style="background: transparent;">TR86 0020 5000 0999 1386 0000 01</code>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3 bg-dark border border-warning rounded">
+                            <label class="form-label text-warning fw-bold small">Ödeme Dekontu Yükle (Zorunlu)</label>
+                            <input type="file" id="ReceiptFile" name="ReceiptFile" class="form-control form-control-custom border-warning text-white" accept="image/*,.pdf" />
+                            <p class="text-white-50 small mt-2 mb-0">Ödemeyi gerçekleştirdikten sonra pdf veya resim formatında dekontunuzu ekleyiniz.</p>
+                        </div>
+                    </div>
+                
+                    <div id="kk-box" class="payment-box">
+                        <h6 class="text-white mb-3">Kredi Kartı Bilgileri</h6>
+                        <input type="text" id="ccName" class="form-control form-control-custom mb-3" placeholder="Kart Üzerindeki İsim">
+                        <input type="text" id="ccNumber" class="form-control form-control-custom mb-3" placeholder="Kart Numarası (0000 0000 0000 0000)" maxlength="19">
+                        <div class="d-flex gap-3">
+                            <input type="text" id="ccDate" class="form-control form-control-custom" placeholder="Ay/Yıl (MM/YY)" style="width: 50%;" maxlength="5">
+                            <input type="password" id="ccCvv" class="form-control form-control-custom" placeholder="CVV" style="width: 50%;" maxlength="3">
+                        </div>
+                        <p class="text-white-50 small mt-3 mb-0"><i class="fas fa-lock"></i> Kart bilgileriniz 256-bit SSL ile güvenle şifrelenir.</p>
+                    </div>
+
+                    <div class="mb-4 mt-2">
+                        <label class="form-label text-white-50 small">Sipariş Notu (Opsiyonel)</label>
+                        <textarea name="OrderNotes" class="form-control form-control-custom" rows="2" placeholder="Örn: Kapıya bırakınız..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm" style="border-radius: 30px;">💳 GÜVENLİ ÖDEME YAP</button>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="checkout-card shadow-lg position-sticky" style="top: 20px; border-top: 3px solid #6c757d;">
+                <h5 class="text-white fw-bold mb-4">Sipariş Özeti</h5>
+    
+            <div class="alert bg-dark text-white-50 small p-2 border-secondary mb-3">
+                <i class="fas fa-sync-alt"></i> Canlı Kur: 1$=@ViewBag.UsdKur.ToString("N2") TL / 1€=@ViewBag.EurKur.ToString("N2") TL
+            </div>
+    
+            <div class="d-flex justify-content-between mb-3 text-white-50">
+                <span>Ürünler Toplamı</span>
+                <span class="text-white">@ViewBag.AraToplam.ToString("N2") TL</span>
+            </div>
+                
+                <div class="d-flex justify-content-between mb-3 text-white-50">
+                    <span>Kargo / Teslimat</span>
+                    
+                    @if (ViewBag.KargoUcreti == 0)
+                    {
+                        <span class="text-success fw-bold">Ücretsiz</span>
+                    }
+                    else
+                    {
+                        <span class="text-white">@ViewBag.KargoUcreti.ToString("N2") TL</span>
+                    }
+                </div>
+                
+                <hr class="border-secondary my-3">
+                
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="text-white fw-bold fs-5">Genel Toplam</span>
+                    <span class="text-success fw-bold fs-5">@ViewBag.GenelToplam.ToString("N2") TL</span>
+                </div>
+
+                <div class="alert alert-warning text-dark small mb-0" style="background-color: #ffc107; border: none; border-radius: 8px;">
+                    <div class="fw-bold mb-1">🎁 Kampanya:</div>
+                    2000 TL ve üzeri alışverişlerinizde kargo ücretsizdir!
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            
+            // --- 1. ÖDEME YÖNTEMİ AKORDİYON JS KODU ---
+            $('.payment-radio').change(function() {
+                if ($(this).val() === 'Havale/EFT') {
+                    $('#kk-box').slideUp(300, function() { 
+                        $('#havale-box').slideDown(300); 
+                    });
+                } else {
+                    $('#havale-box').slideUp(300, function() { 
+                        $('#kk-box').slideDown(300); 
+                    });
+                }
+            });
+
+            // --- YENİ EKLENEN KISIM: ZORUNLU ALAN KONTROLLERİ ---
+            $('#checkoutForm').submit(function(e) {
+                let selectedPayment = $('input[name="PaymentMethod"]:checked').val();
+                
+                // Kredi Kartı Kontrolü
+                if (selectedPayment === 'Kredi Kartı') {
+                    let ccName = $('#ccName').val().trim();
+                    let ccNumber = $('#ccNumber').val().trim();
+                    let ccDate = $('#ccDate').val().trim();
+                    let ccCvv = $('#ccCvv').val().trim();
+
+                    if (!ccName || !ccNumber || !ccDate || !ccCvv) {
+                        e.preventDefault(); 
+                        alert('⚠️ Lütfen Kredi Kartı bilgilerinizi eksiksiz doldurunuz!');
+                        return false;
+                    }
+                    if (ccNumber.length < 15) {
+                        e.preventDefault();
+                        alert('⚠️ Lütfen geçerli bir Kart Numarası giriniz!');
+                        return false;
+                    }
+                }
+                
+                // Havale Kontrolü (Dekont Zorunlu)
+                if (selectedPayment === 'Havale/EFT') {
+                    let receiptInput = $('#ReceiptFile').val();
+                    if (!receiptInput) {
+                        e.preventDefault(); 
+                        alert('⚠️ Havale/EFT işlemlerinde dekont yüklemek zorunludur!');
+                        return false;
+                    }
+                }
+            });
+
+            // --- 3. GÖMÜLÜ TÜRKİYE 81 İL / 973 İLÇE VERİTABANI VE MANUEL KONTROL ---
+            const allTurkeyData = {
+                "Adana": ["Aladağ", "Ceyhan", "Çukurova", "Feke", "İmamoğlu", "Karaisalı", "Karataş", "Kozan", "Pozantı", "Saimbeyli", "Sarıçam", "Seyhan", "Tufanbeyli", "Yumurtalık", "Yüreğir"],
+                "Adıyaman": ["Besni", "Çelikhan", "Gerger", "Gölbaşı", "Kahta", "Merkez", "Samsat", "Sincik", "Tut"],
+                "Afyonkarahisar": ["Başmakçı", "Bayat", "Bolvadin", "Çay", "Çobanlar", "Dazkırı", "Dinar", "Emirdağ", "Evciler", "Hocalar", "İhsaniye", "İscehisar", "Kızılören", "Merkez", "Sandıklı", "Sinanpaşa", "Sultandağı", "Şuhut"],
+                "Ağrı": ["Diyadin", "Doğubayazıt", "Eleşkirt", "Hamur", "Merkez", "Patnos", "Taşlıçay", "Tutak"],
+                "Aksaray": ["Ağaçören", "Eskil", "Gülağaç", "Güzelyurt", "Merkez", "Ortaköy", "Sarıyahşi", "Sultanhanı"],
+                "Amasya": ["Göynücek", "Gümüşhacıköy", "Hamamözü", "Merkez", "Merzifon", "Suluova", "Taşova"],
+                "Ankara": ["Akyurt", "Altındağ", "Ayaş", "Bala", "Beypazarı", "Çamlıdere", "Çankaya", "Çubuk", "Elmadağ", "Etimesgut", "Evren", "Gölbaşı", "Güdül", "Haymana", "Kahramankazan", "Kalecik", "Keçiören", "Kızılcahamam", "Mamak", "Nallıhan", "Polatlı", "Pursaklar", "Sincan", "Şereflikoçhisar", "Yenimahalle"],
+                "Antalya": ["Akseki", "Aksu", "Alanya", "Demre", "Döşemealtı", "Elmalı", "Finike", "Gazipaşa", "Gündoğmuş", "İbradı", "Kaş", "Kemer", "Kepez", "Konyaaltı", "Korkuteli", "Kumluca", "Manavgat", "Muratpaşa", "Serik"],
+                "Ardahan": ["Çıldır", "Damal", "Göle", "Hanak", "Merkez", "Posof"],
+                "Artvin": ["Ardanuç", "Arhavi", "Borçka", "Hopa", "Kemalpaşa", "Merkez", "Murgul", "Şavşat", "Yusufeli"],
+                "Aydın": ["Bozdoğan", "Buharkent", "Çine", "Didim", "Efeler", "İncirliova", "Karacasu", "Karpuzlu", "Koçarlı", "Köşk", "Kuşadası", "Kuyucak", "Nazilli", "Söke", "Sultanhisar", "Yenipazar"],
+                "Balıkesir": ["Altıeylül", "Ayvalık", "Balya", "Bandırma", "Bigadiç", "Burhaniye", "Dursunbey", "Edremit", "Erdek", "Gömeç", "Gönen", "Havran", "İvrindi", "Karesi", "Kepsut", "Manyas", "Marmara", "Savaştepe", "Sındırgı", "Susurluk"],
+                "Bartın": ["Amasra", "Kurucaşile", "Merkez", "Ulus"],
+                "Batman": ["Beşiri", "Gercüş", "Hasankeyf", "Kozluk", "Merkez", "Sason"],
+                "Bayburt": ["Aydıntepe", "Demirözü", "Merkez"],
+                "Bilecik": ["Bozüyük", "Gölpazarı", "İnhisar", "Merkez", "Osmaneli", "Pazaryeri", "Söğüt", "Yenipazar"],
+                "Bingöl": ["Adaklı", "Genç", "Karlıova", "Kiğı", "Merkez", "Solhan", "Yayladere", "Yedisu"],
+                "Bitlis": ["Adilcevaz", "Ahlat", "Güroymak", "Hizan", "Merkez", "Mutki", "Tatvan"],
+                "Bolu": ["Dörtdivan", "Gerede", "Göynük", "Kıbrıscık", "Mengen", "Merkez", "Mudurnu", "Seben", "Yeniçağa"],
+                "Burdur": ["Ağlasun", "Altınyayla", "Bucak", "Çavdır", "Çeltikçi", "Gölhisar", "Karamanlı", "Kemer", "Merkez", "Tefenni", "Yeşilova"],
+                "Bursa": ["Büyükorhan", "Gemlik", "Gürsu", "Harmancık", "İnegöl", "İznik", "Karacabey", "Keles", "Kestel", "Mudanya", "Mustafakemalpaşa", "Nilüfer", "Orhaneli", "Orhangazi", "Osmangazi", "Yenişehir", "Yıldırım"],
+                "Çanakkale": ["Ayvacık", "Bayramiç", "Biga", "Bozcaada", "Çan", "Eceabat", "Ezine", "Gelibolu", "Gökçeada", "Lapseki", "Merkez", "Yenice"],
+                "Çankırı": ["Atkaracalar", "Bayramören", "Çerkeş", "Eldivan", "Ilgaz", "Kızılırmak", "Korgun", "Kurşunlu", "Merkez", "Orta", "Şabanözü", "Yapraklı"],
+                "Çorum": ["Alaca", "Bayat", "Boğazkale", "Dodurga", "İskilip", "Kargı", "Laçin", "Mecitözü", "Merkez", "Oğuzlar", "Ortaköy", "Osmancık", "Sungurlu", "Uğurludağ"],
+                "Denizli": ["Acıpayam", "Babadağ", "Baklan", "Bekilli", "Beyağaç", "Bozkurt", "Buldan", "Çal", "Çameli", "Çardak", "Çivril", "Güney", "Honaz", "Kale", "Merkezefendi", "Pamukkale", "Sarayköy", "Serinhisar", "Tavas"],
+                "Diyarbakır": ["Bağlar", "Bismil", "Çermik", "Çınar", "Çüngüş", "Dicle", "Eğil", "Ergani", "Hani", "Hazro", "Kayapınar", "Kocaköy", "Kulp", "Lice", "Silvan", "Sur", "Yenişehir"],
+                "Düzce": ["Akçakoca", "Cumayeri", "Çilimli", "Gölyaka", "Gümüşova", "Kaynaşlı", "Merkez", "Yığılca"],
+                "Edirne": ["Enez", "Havsa", "İpsala", "Keşan", "Lalapaşa", "Meriç", "Merkez", "Süloğlu", "Uzunköprü"],
+                "Elazığ": ["Ağın", "Alacakaya", "Arıcak", "Baskil", "Karakoçan", "Keban", "Kovancılar", "Maden", "Merkez", "Palu", "Sivrice"],
+                "Erzincan": ["Çayırlı", "İliç", "Kemah", "Kemaliye", "Merkez", "Otlukbeli", "Refahiye", "Tercan", "Üzümlü"],
+                "Erzurum": ["Aşkale", "Aziziye", "Çat", "Hınıs", "Horasan", "İspir", "Karaçoban", "Karayazı", "Köprüköy", "Narman", "Oltu", "Olur", "Palandöken", "Pasinler", "Pazaryolu", "Şenkaya", "Tekman", "Tortum", "Uzundere", "Yakutiye"],
+                "Eskişehir": ["Alpu", "Beylikova", "Çifteler", "Günyüzü", "Han", "İnönü", "Mahmudiye", "Mihalgazi", "Mihalıççık", "Odunpazarı", "Sarıcakaya", "Seyitgazi", "Sivrihisar", "Tepebaşı"],
+                "Gaziantep": ["Araban", "İslahiye", "Karkamış", "Nizip", "Nurdağı", "Oğuzeli", "Şahinbey", "Şehitkamil", "Yavuzeli"],
+                "Giresun": ["Alucra", "Bulancak", "Çamoluk", "Çanakçı", "Dereli", "Doğankent", "Espiye", "Eynesil", "Görele", "Güce", "Keşap", "Merkez", "Piraziz", "Şebinkarahisar", "Tirebolu", "Yağlıdere"],
+                "Gümüşhane": ["Kelkit", "Köse", "Kürtün", "Merkez", "Şiran", "Torul"],
+                "Hakkari": ["Çukurca", "Derecik", "Merkez", "Şemdinli", "Yüksekova"],
+                "Hatay": ["Altınözü", "Antakya", "Arsuz", "Belen", "Defne", "Dörtyol", "Erzin", "Hassa", "İskenderun", "Kırıkhan", "Kumlu", "Payas", "Reyhanlı", "Samandağ", "Yayladağı"],
+                "Iğdır": ["Aralık", "Karakoyunlu", "Merkez", "Tuzluca"],
+                "Isparta": ["Aksu", "Atabey", "Eğirdir", "Gelendost", "Gönen", "Keçiborlu", "Merkez", "Senirkent", "Sütçüler", "Şarkikaraağaç", "Uluborlu", "Yalvaç", "Yenişarbademli"],
+                "İstanbul": ["Adalar", "Arnavutköy", "Ataşehir", "Avcılar", "Bağcılar", "Bahçelievler", "Bakırköy", "Başakşehir", "Bayrampaşa", "Beşiktaş", "Beykoz", "Beylikdüzü", "Beyoğlu", "Büyükçekmece", "Çatalca", "Çekmeköy", "Esenler", "Esenyurt", "Eyüpsultan", "Fatih", "Gaziosmanpaşa", "Güngören", "Kadıköy", "Kağıthane", "Kartal", "Küçükçekmece", "Maltepe", "Pendik", "Sancaktepe", "Sarıyer", "Silivri", "Sultanbeyli", "Sultangazi", "Şile", "Şişli", "Tuzla", "Ümraniye", "Üsküdar", "Zeytinburnu"],
+                "İzmir": ["Aliağa", "Balçova", "Bayındır", "Bayraklı", "Bergama", "Beydağ", "Bornova", "Buca", "Çeşme", "Çiğli", "Dikili", "Foça", "Gaziemir", "Güzelbahçe", "Karabağlar", "Karaburun", "Karşıyaka", "Kemalpaşa", "Kınık", "Kiraz", "Konak", "Menderes", "Menemen", "Narlıdere", "Ödemiş", "Seferihisar", "Selçuk", "Tire", "Torbalı", "Urla"],
+                "Kahramanmaraş": ["Afşin", "Andırın", "Çağlayancerit", "Dulkadiroğlu", "Ekinözü", "Elbistan", "Göksun", "Nurhak", "Onikişubat", "Pazarcık", "Türkoğlu"],
+                "Karabük": ["Eflani", "Eskipazar", "Merkez", "Ovacık", "Safranbolu", "Yenice"],
+                "Karaman": ["Ayrancı", "Başyayla", "Ermenek", "Kazımkarabekir", "Merkez", "Sarıveliler"],
+                "Kars": ["Akyaka", "Arpaçay", "Digor", "Kağızman", "Merkez", "Sarıkamış", "Selim", "Susuz"],
+                "Kastamonu": ["Abana", "Ağlı", "Araç", "Azdavay", "Bozkurt", "Cide", "Çatalzeytin", "Daday", "Devrekani", "Doğanyurt", "Hanönü", "İhsangazi", "İnebolu", "Küre", "Merkez", "Pınarbaşı", "Seydiler", "Şenpazar", "Taşköprü", "Tosya"],
+                "Kayseri": ["Akkışla", "Bünyan", "Develi", "Felahiye", "Hacılar", "İncesu", "Kocasinan", "Melikgazi", "Özvatan", "Pınarbaşı", "Sarıoğlan", "Sarız", "Talas", "Tomarza", "Yahyalı", "Yeşilhisar"],
+                "Kırıkkale": ["Bahşılı", "Balışeyh", "Çelebi", "Delice", "Karakeçili", "Keskin", "Merkez", "Sulakyurt", "Yahşihan"],
+                "Kırklareli": ["Babaeski", "Demirköy", "Kofçaz", "Lüleburgaz", "Merkez", "Pehlivanköy", "Pınarhisar", "Vize"],
+                "Kırşehir": ["Akçakent", "Akpınar", "Boztepe", "Çiçekdağı", "Kaman", "Merkez", "Mucur"],
+                "Kilis": ["Elbeyli", "Musabeyli", "Merkez", "Polateli"],
+                "Kocaeli": ["Başiskele", "Çayırova", "Darıca", "Derince", "Dilovası", "Gebze", "Gölcük", "İzmit", "Kandıra", "Karamürsel", "Kartepe", "Körfez"],
+                "Konya": ["Ahırlı", "Akören", "Akşehir", "Altınekin", "Beyşehir", "Bozkır", "Cihanbeyli", "Çeltik", "Çumra", "Derbent", "Derebucak", "Doğanhisar", "Emirgazi", "Ereğli", "Güneysınır", "Hadim", "Halkapınar", "Hüyük", "Ilgın", "Kadınhanı", "Karapınar", "Karatay", "Kulu", "Meram", "Sarayönü", "Selçuklu", "Seydişehir", "Taşkent", "Tuzlukçu", "Yalıhüyük", "Yunak"],
+                "Kütahya": ["Altıntaş", "Aslanapa", "Çavdarhisar", "Domaniç", "Dumlupınar", "Emet", "Gediz", "Hisarcık", "Merkez", "Pazarlar", "Şaphane", "Simav", "Tavşanlı"],
+                "Malatya": ["Akçadağ", "Arapgir", "Arguvan", "Battalgazi", "Darende", "Doğanşehir", "Doğanyol", "Hekimhan", "Kale", "Kuluncak", "Pütürge", "Yazıhan", "Yeşilyurt"],
+                "Manisa": ["Ahmetli", "Akhisar", "Alaşehir", "Demirci", "Gölmarmara", "Gördes", "Kırkağaç", "Köprübaşı", "Kula", "Salihli", "Sarıgöl", "Saruhanlı", "Selendi", "Soma", "Şehzadeler", "Turgutlu", "Yunusemre"],
+                "Mardin": ["Artuklu", "Dargeçit", "Derik", "Kızıltepe", "Mazıdağı", "Midyat", "Nusaybin", "Ömerli", "Savur", "Yeşilli"],
+                "Mersin": ["Akdeniz", "Anamur", "Aydıncık", "Bozyazı", "Çamlıyayla", "Erdemli", "Gülnar", "Mezitli", "Mut", "Silifke", "Tarsus", "Toroslar", "Yenişehir"],
+                "Muğla": ["Bodrum", "Dalaman", "Datça", "Fethiye", "Kavaklıdere", "Köyceğiz", "Marmaris", "Menteşe", "Milas", "Ortaca", "Seydikemer", "Ula", "Yatağan"],
+                "Muş": ["Bulanık", "Hasköy", "Korkut", "Malazgirt", "Merkez", "Varto"],
+                "Nevşehir": ["Acıgöl", "Avanos", "Derinkuyu", "Gülşehir", "Hacıbektaş", "Kozaklı", "Merkez", "Ürgüp"],
+                "Niğde": ["Altunhisar", "Bor", "Çamardı", "Çiftlik", "Merkez", "Ulukışla"],
+                "Ordu": ["Akkuş", "Altınordu", "Aybastı", "Çamaş", "Çatalpınar", "Çaybaşı", "Fatsa", "Gölköy", "Gülyalı", "Gürgentepe", "İkizce", "Kabadüz", "Kabataş", "Korgan", "Kumru", "Mesudiye", "Perşembe", "Ulubey", "Ünye"],
+                "Osmaniye": ["Bahçe", "Düziçi", "Hasanbeyli", "Kadirli", "Merkez", "Sumbas"],
+                "Rize": ["Ardeşen", "Çamlıhemşin", "Çayeli", "Derepazarı", "Fındıklı", "Güneysu", "Hemşin", "İkizdere", "İyidere", "Kalkandere", "Merkez", "Pazar"],
+                "Sakarya": ["Adapazarı", "Akyazı", "Arifiye", "Erenler", "Ferizli", "Geyve", "Hendek", "Karapürçek", "Karasu", "Kaynarca", "Kocaali", "Pamukova", "Sapanca", "Serdivan"],
+                "Samsun": ["19 Mayıs", "Alaçam", "Asarcık", "Atakum", "Ayvacık", "Bafra", "Canik", "Çarşamba", "Havza", "İlkadım", "Kavak", "Ladik", "Salıpazarı", "Tekkeköy", "Terme", "Vezirköprü", "Yakakent"],
+                "Şanlıurfa": ["Akçakale", "Birecik", "Bozova", "Ceylanpınar", "Eyyübiye", "Halfeti", "Haliliye", "Harran", "Hilvan", "Karaköprü", "Siverek", "Suruç", "Viranşehir"],
+                "Siirt": ["Baykan", "Eruh", "Kurtalan", "Merkez", "Pervari", "Şirvan", "Tillo"],
+                "Sinop": ["Ayancık", "Boyabat", "Dikmen", "Durağan", "Erfelek", "Gerze", "Merkez", "Saraydüzü", "Türkeli"],
+                "Şırnak": ["Beytüşşebap", "Cizre", "Güçlükonak", "İdil", "Merkez", "Silopi", "Uludere"],
+                "Sivas": ["Akıncılar", "Altınyayla", "Divriği", "Doğanşar", "Gemerek", "Gölova", "Gürün", "Hafik", "İmranlı", "Kangal", "Koyulhisar", "Merkez", "Suşehri", "Şarkışla", "Ulaş", "Yıldızeli", "Zara"],
+                "Tekirdağ": ["Çerkezköy", "Çorlu", "Ergene", "Hayrabolu", "Kapaklı", "Malkara", "Marmaraereğlisi", "Muratlı", "Saray", "Süleymanpaşa", "Şarköy"],
+                "Tokat": ["Almus", "Artova", "Başçiftlik", "Erbaa", "Niksar", "Pazar", "Reşadiye", "Sulusaray", "Turhal", "Yeşilyurt", "Zile", "Merkez"],
+                "Trabzon": ["Akçaabat", "Araklı", "Arsin", "Beşikdüzü", "Çarşıbaşı", "Çaykara", "Dernekpazarı", "Düzköy", "Hayrat", "Köprübaşı", "Maçka", "Of", "Ortahisar", "Sürmene", "Şalpazarı", "Tonya", "Vakfıkebir", "Yomra"],
+                "Tunceli": ["Çemişgezek", "Hozat", "Mazgirt", "Merkez", "Nazımiye", "Ovacık", "Pertek", "Pülümür"],
+                "Uşak": ["Banaz", "Eşme", "Karahallı", "Merkez", "Sivaslı", "Ulubey"],
+                "Van": ["Bahçesaray", "Başkale", "Çaldıran", "Çatak", "Edremit", "Erciş", "Gevaş", "Gürpınar", "İpekyolu", "Muradiye", "Özalp", "Saray", "Tuşba"],
+                "Yalova": ["Altınova", "Armutlu", "Çınarcık", "Çiftlikköy", "Merkez", "Termal"],
+                "Yozgat": ["Akdağmadeni", "Aydıncık", "Boğazlıyan", "Çandır", "Çayıralan", "Çekerek", "Kadışehri", "Merkez", "Saraykent", "Sarıkaya", "Sorgun", "Şefaatli", "Yenifakılı", "Yerköy"],
+                "Zonguldak": ["Alaplı", "Çaycuma", "Devrek", "Ereğli", "Gökçebey", "Kilimli", "Kozlu", "Merkez"]
+            };
+
+            let citySelect = $('#CitySelect');
+            let districtSelect = $('#DistrictSelect');
+            let cityManual = $('#CityManual');
+            let districtManual = $('#DistrictManual');
+
+            citySelect.empty().append('<option value="">Şehir Seçiniz...</option>');
+            $.each(allTurkeyData, function(city, districts) {
+                citySelect.append($('<option></option>').val(city).html(city));
+            });
+            citySelect.append('<option value="Diğer" class="text-warning fw-bold">➕ Diğer (Manuel Gir)</option>');
+
+            citySelect.change(function() {
+                let selectedCity = $(this).val();
+                districtSelect.empty().append('<option value="">İlçe Seçiniz...</option>');
+
+                if (selectedCity === 'Diğer') {
+                    cityManual.slideDown(200).prop('required', true);
+                    districtSelect.slideUp(200).prop('required', false);
+                    districtManual.slideDown(200).prop('required', true);
+                } else {
+                    cityManual.slideUp(200).prop('required', false);
+                    districtSelect.slideDown(200).prop('required', true);
+                    districtManual.slideUp(200).prop('required', false);
+
+                    if(selectedCity && allTurkeyData[selectedCity]) {
+                        $.each(allTurkeyData[selectedCity], function(i, district) {
+                            districtSelect.append($('<option></option>').val(district).html(district));
+                        });
+                        districtSelect.append('<option value="Diğer" class="text-warning fw-bold">➕ Diğer (Manuel Gir)</option>');
+                    }
+                }
+            });
+
+            districtSelect.change(function() {
+                if ($(this).val() === 'Diğer') {
+                    districtManual.slideDown(200).prop('required', true);
+                } else {
+                    districtManual.slideUp(200).prop('required', false);
+                }
+            });
+
+            let savedCity = '@Html.Raw(ViewBag.CurrentUser?.City ?? "")';
+            let savedDistrict = '@Html.Raw(ViewBag.CurrentUser?.District ?? "")';
+            
+            if (savedCity) {
+                if ($("#CitySelect option[value='" + savedCity + "']").length > 0) {
+                    citySelect.val(savedCity).trigger('change');
+                    
+                    if (savedDistrict) {
+                        setTimeout(() => {
+                            if ($("#DistrictSelect option[value='" + savedDistrict + "']").length > 0) {
+                                districtSelect.val(savedDistrict);
+                            }
+                        }, 100);
+                    }
+                }
+            }
+
+        });
+    </script>
+}

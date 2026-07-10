@@ -1,0 +1,107 @@
+@model SunmedMedikal.Models.SubSubSubSubCategory
+@{
+    ViewData["Title"] = "5. Alt Kategoriyi Düzenle";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card border-dark shadow-sm bg-dark text-white mb-4" style="max-width: 900px; margin: 0 auto;">
+        <div class="card-header border-bottom border-secondary p-3">
+            <h5 class="mb-0 fw-bold text-primary">✏️ 5. Seviye Alt Kategoriyi Düzenle</h5>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="EditSubSubSubSubCategory" method="post">
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-white-50">Ana Kategori</label>
+                        <select asp-for="MainCategory" id="MainCategorySelect" class="form-select bg-dark text-white border-secondary" required>
+                            <option value="">Seçiniz</option>
+                            @if(ViewBag.MainCategories != null) {
+                                foreach(var main in ViewBag.MainCategories) { <option value="@main.Name">@main.Name</option> }
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-white-50">Alt Kategori</label>
+                        <select asp-for="SubCategory" id="SubCategorySelect" class="form-select bg-dark text-white border-secondary" required>
+                            <option value="">Seçiniz</option>
+                            @if(ViewBag.SubCategories != null) {
+                                foreach(var sub in ViewBag.SubCategories) { <option value="@sub.Name" data-main="@sub.MainCategory">@sub.Name</option> }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-white-50">3. Kategori</label>
+                        <select asp-for="SubSubCategory" id="SubSubCategorySelect" class="form-select bg-dark text-white border-secondary" required>
+                            <option value="">Seçiniz</option>
+                            @if(ViewBag.SubSubCategories != null) {
+                                foreach(var ss in ViewBag.SubSubCategories) { <option value="@ss.Name" data-sub="@ss.SubCategory">@ss.Name</option> }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-white-50">4. Kategori</label>
+                        <select asp-for="SubSubSubCategory" id="SubSubSubCategorySelect" class="form-select bg-dark text-white border-secondary" required>
+                            <option value="">Seçiniz</option>
+                            @if(ViewBag.SubSubSubCategories != null) {
+                                foreach(var sss in ViewBag.SubSubSubCategories) { <option value="@sss.Name" data-subsub="@sss.SubSubCategory">@sss.Name</option> }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label small text-white-50">5. Kategori Adı</label>
+                        <input type="text" asp-for="Name" class="form-control bg-dark text-white border-secondary" required />
+                    </div>
+                </div>
+
+                <hr class="border-secondary mt-2 mb-4">
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/Admin/SubSubSubSubCategories" class="btn btn-outline-secondary fw-bold px-4">İptal Et</a>
+                    <button type="submit" class="btn btn-primary fw-bold px-4">Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#MainCategorySelect').change(function() {
+                var main = $(this).val();
+                $('#SubCategorySelect option').each(function() {
+                    if ($(this).val() === "" || $(this).data('main') === main) { $(this).show(); } else { $(this).hide(); }
+                });
+            });
+
+            $('#SubCategorySelect').change(function() {
+                var sub = $(this).val();
+                $('#SubSubCategorySelect option').each(function() {
+                    if ($(this).val() === "" || $(this).data('sub') === sub) { $(this).show(); } else { $(this).hide(); }
+                });
+            });
+
+            $('#SubSubCategorySelect').change(function() {
+                var subsub = $(this).val();
+                $('#SubSubSubCategorySelect option').each(function() {
+                    if ($(this).val() === "" || $(this).data('subsub') === subsub) { $(this).show(); } else { $(this).hide(); }
+                });
+            });
+
+            var initialSub = '@Html.Raw(Model.SubCategory)';
+            var initialSubSub = '@Html.Raw(Model.SubSubCategory)';
+            var initialSubSubSub = '@Html.Raw(Model.SubSubSubCategory)';
+
+            $('#MainCategorySelect').trigger('change');
+            if(initialSub) { $('#SubCategorySelect').val(initialSub).trigger('change'); }
+            if(initialSubSub) { $('#SubSubCategorySelect').val(initialSubSub).trigger('change'); }
+            if(initialSubSubSub) { $('#SubSubSubCategorySelect').val(initialSubSubSub); }
+        });
+    </script>
+}

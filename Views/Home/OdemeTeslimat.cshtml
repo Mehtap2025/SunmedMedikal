@@ -1,0 +1,207 @@
+@{
+    ViewData["Title"] = "Ödeme ve Teslimat Şartları";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    
+    .policy-card {
+        background-color: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-top: 3px solid #dc3545;
+        border-radius: 12px;
+        padding: 2.5rem;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .policy-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+    }
+    
+    .policy-title {
+        color: #fff;
+        font-weight: bold;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .policy-text {
+        color: #aaa;
+        line-height: 1.8;
+        font-size: 0.95rem;
+        text-align: justify;
+    }
+
+    .contract-highlight {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .attention-box {
+        background-color: #0f0b00;
+        border: 1px solid #ffc107;
+        border-left: 5px solid #ffc107;
+        border-radius: 8px;
+        padding: 2rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .alert-box-danger {
+        background-color: #1a0505;
+        border: 1px solid #dc3545;
+        border-left: 5px solid #dc3545;
+        border-radius: 8px;
+        padding: 2rem;
+    }
+
+    .bullet-list {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .bullet-list li {
+        color: #bbb;
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .bullet-list li::before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: #dc3545;
+    }
+</style>
+
+<div class="container mt-5 mb-5 pb-5" style="min-height: 70vh;">
+    
+    <!-- Sayfa Başlığı -->
+    <div class="row text-center mb-5 border-bottom border-secondary pb-4">
+        <div class="col-12">
+            <div class="display-4 mb-3">🚚</div>
+            <h1 class="text-white fw-bold text-uppercase" style="letter-spacing: 2px;">
+                Ödeme ve <span class="text-danger">Teslimat Şartları</span>
+            </h1>
+            <p class="text-white-50 mt-3 fs-5" style="max-width: 800px; margin: 0 auto;">
+                <strong>sunmedikal.com</strong> üzerinden yaptığınız alışverişlerin ödeme seçenekleri, veri güvenliği ve lojistik süreçleri hakkındaki tüm detaylar.
+            </p>
+        </div>
+    </div>
+
+    <!-- Hızlı Bilgi -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="policy-card py-4 px-4" style="border-top-color: #28a745;">
+                <p class="policy-text mb-2"><span class="text-success fw-bold">Sepetim:</span> Bu sepete attığınız tüm ürünler <strong>sunmedikal.com</strong> tarafından satışta bulundurulduğu süre içinde burada yer alacaktır. Buradaki ürünler her an satın alınmaya hazır olan ürünlerdir.</p>
+                <p class="policy-text mb-0"><span class="text-success fw-bold">Hemen Al:</span> Hızlı bir sekmeyle direkt kredi kartı bilgilerinizi girerek satın alma işlemine başlarsınız.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        
+        <!-- 1. Ödemeler -->
+        <div class="col-md-6">
+            <div class="policy-card" style="border-top-color: #00bac6;">
+                <div class="policy-title" style="color: #00bac6;">💳 Ödeme Seçenekleri ve Süreçler</div>
+                
+                <h6 class="text-white fw-bold mt-4">Kredi Kartı</h6>
+                <p class="policy-text"><strong>sunmedikal.com</strong> alışverişlerinizi Mastercard ya da Visa kredi kartlarınızı kullanarak güvenle yapabilirsiniz.</p>
+
+                <h6 class="text-white fw-bold mt-4">EFT & Havale</h6>
+                <p class="policy-text">Havale ya da EFT ile yaptığınız alışverişlerinizde, teslimat süresinin başlangıcı siparişi verdiğiniz zaman değil, <strong>sipariş ederinin hesaplarımıza geçtiği andır.</strong> 5 iş günü içerisinde hesaba geçmeyen havale ya da EFT siparişleri geçersiz sayılmaktadır.</p>
+
+                <h6 class="text-white fw-bold mt-4">Kredi Kartı Provizyon Aksaklıkları</h6>
+                <p class="policy-text">Siparişleriniz sırasında kredi kartınız aşağıda belirtilen nedenlerden dolayı onaylanmayabilir:</p>
+                <ul class="bullet-list">
+                    <li>Kullanılabilir limitinizin yetersiz olması</li>
+                    <li>Kart numaranızı yanlış girmeniz</li>
+                    <li>Kartınızın son kullanma tarihinin geçmiş olması</li>
+                    <li>Onay işlemleri sırasında bağlantı sorunuyla karşılaşmanız</li>
+                    <li>Kullandığınız kart bir ek kart ise ana kart sahibi tarafından iptal edilmiş olması</li>
+                    <li>Kayıp ya da çalıntı ihbarı verdiğiniz kredi kartınızı yeniden kullanmaya çalışmanız</li>
+                    <li>Kullandığınız kartın bir kredi kartı olmaması</li>
+                </ul>
+                <p class="policy-text small mt-3">* Doğacak sorunlarla ilgili, kredi kartını aldığınız banka ile iletişime geçmeniz önerilir.</p>
+            </div>
+        </div>
+
+        <!-- 2. Veri Güvenliği -->
+        <div class="col-md-6">
+            <div class="policy-card" style="border-top-color: #6f42c1;">
+                <div class="policy-title" style="color: #a985e5;">🔐 Veri ve Kredi Kartı Güvenliği</div>
+                
+                <h6 class="text-white fw-bold mt-4">Veri Güvenliği ve Gizliliği</h6>
+                <p class="policy-text">Kullanıcılardan derlenen tüm hassas bilgiler en yüksek standartlarda saklanmakta; kullanıcı onayı olmaksızın hiçbir isim altında açıklanmamakta ve üçüncü şahıslarla paylaşılmamaktadır. Sitemizdeki cookie'ler (çerezler) yalnızca optimal sistem performansı ve içerik sunumu için kullanılmaktadır.</p>
+
+                <h6 class="text-white fw-bold mt-4">Sitemizde Kredi Kartları Güvenliği</h6>
+                <p class="policy-text"><strong>sunmedikal.com</strong> Geotrust sertifikalıdır. Alışveriş sırasında kullanılan kredi kartı ile ilgili bilgiler siteden bağımsız olarak Geotrust tarafından <strong>128 bit SSL (Secure Sockets Layer)</strong> protokolü ile şifrelenip sorgulanmak üzere ilgili bankaya ulaşır. Kartla ilgili hiçbir bilgi site tarafından görüntülenemediğinden ve kaydedilmediğinden, üçüncü şahısların bu bilgileri ele geçirmesi engellenmiş olur.</p>
+
+                <h6 class="text-white fw-bold mt-4">Online Alışveriş İpuçları</h6>
+                <p class="policy-text">Kredi kartı bilgileriniz günlük hayattaki fiziki ortamlarda da çalınabilir. Kart numaranızı, son kullanma tarihini ve CVC (Güvenlik numarası) kodunu başkalarına vermeyin. Ekstreniz elinize geçtiğinde gerçek dışı harcamalarla ilgili firmalarla iletişime geçin.</p>
+            </div>
+        </div>
+
+        <!-- 3. Teslimat Süreçleri -->
+        <div class="col-md-7">
+            <div class="policy-card" style="border-top-color: #ffc107;">
+                <div class="policy-title text-warning">📦 Sipariş ve Teslimat Süreçleri</div>
+                
+                <p class="policy-text"><span class="contract-highlight">Siparişiniz ne zaman elinize ulaşacak?</span><br>Ödeme ve fatura bilgilerinin doğruluğu onaylandıktan sonra, siparişler kargoya teslim edilir. Kargoya teslim edildikten sonra <strong>en erken 3 iş günü, en geç 7 iş günü</strong> içinde ulaştırılacaktır.</p>
+
+                <p class="policy-text"><span class="contract-highlight">Aynı Gün Kargo:</span> "Aynı Gün Kargo" ibaresi bulunan ürünlerin aynı gün kargoya verilmesi <strong>saat 14:00’den önce</strong> verilen siparişler için geçerlidir. 14:00’den sonraki siparişler ertesi iş gününde kargoya verilir.</p>
+
+                <p class="policy-text"><span class="contract-highlight">Hafta Sonu Siparişleri:</span> Cuma günü öğle 13.00’den önce verilen siparişler, Cumartesi gününden itibaren teslim edilmeye başlanır. Cuma 13.00’den sonra verilen siparişler Pazartesi işleme alınır. Pazar günleri teslimat yapılmamaktadır.</p>
+
+                <p class="policy-text mb-0"><span class="contract-highlight">Stok ve Adres Bildirimi:</span> Nadiren yaşanabilecek tedarikçi stok sorunlarında tarafınıza mutlaka haber verilecektir. Siparişinizin hızlı ulaşması için adres ve iletişim bilgilerinizi eksiksiz doldurunuz.</p>
+            </div>
+        </div>
+
+        <!-- 4. Hasar ve Fatura İşlemleri -->
+        <div class="col-md-5">
+            <div class="policy-card" style="border-top-color: #dc3545;">
+                <div class="policy-title text-danger">📄 Hasarlı Ürün ve Fatura</div>
+                
+                <h6 class="text-white fw-bold mt-3">Hasarlı Ürün Teslimatı</h6>
+                <p class="policy-text">Eğer ürününüz hasarlı olarak ulaştı ise; kargo görevlisinin yanında koliyi açıp <strong>"Hasar Tespit Tutanağı"</strong> hazırlatmanız şarttır. Tutanakla birlikte karşı ödemeli olarak bize gönderdiğinizde yeni ürün çıkışı sağlanacaktır.</p>
+
+                <h6 class="text-white fw-bold mt-4">Fatura Teslimatı</h6>
+                <p class="policy-text">Resmi faturalarımız yollanan siparişinizin ayrılmaz bir parçasıdır. Koli dışında amblemsiz bir zarf içinde size ulaştırılır. Teslim edilmezse ısrarla kargo yetkilisinden isteyiniz veya tutanak tutturunuz.</p>
+                <p class="policy-text mb-0">Fatura adresi farklı olan siparişlerde "Fatura Adresime Gelsin" seçilirse fatura karşı ödemeli kargolanır.</p>
+            </div>
+        </div>
+
+        <!-- ÖNEMLİ UYARILAR PANELİ -->
+        <div class="col-12">
+            <div class="alert-box-danger">
+                <h4 class="text-danger fw-bold mb-3">⚠️ ÖNEMLİ TESLİMAT UYARILARI</h4>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <p class="policy-text text-white mb-2"><strong class="text-danger">KAPIDA ÖDEME YOKTUR</strong></p>
+                        <p class="policy-text text-white-50">
+                            <strong>sunmedikal.com</strong>’den verdiğiniz siparişlerde teslimat sırasında nakit ödeme imkanı <strong>yoktur.</strong> Sizden siparişiniz ile ilgili kargo ücreti dışında bir kapıda ödeme istendiyse hiçbir şekilde ödeme yapmayınız ve paketi teslim almayınız.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="policy-text text-white mb-2"><strong class="text-danger">CAM MALZEME KARGO RİSKİ</strong></p>
+                        <p class="policy-text text-white-50">
+                            Değerli Müşterilerimiz; cam malzemelerin kargo ile sevkiyatında oluşabilecek hasarlardan firmamız sorumlu değildir. Yapılan uyarıya rağmen kargo ile gönderim istenirse <strong>sorumluluk tamamen alıcıya aittir ve iade kabul edilmemektedir.</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>

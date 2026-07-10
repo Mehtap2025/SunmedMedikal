@@ -1,0 +1,151 @@
+@model SunmedMedikal.Models.ProfileViewModel
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    .custom-input {
+        background-color: #1a1a1a !important;
+        border: 1px solid #333 !important;
+        color: #fff !important;
+    }
+    .custom-input:focus {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
+    .readonly-input { background-color: #0a0a0a !important; color: #6c757d !important; cursor: not-allowed; }
+    
+    /* GÖLGE YAZI (PLACEHOLDER) RENGİ İÇİN UFAK BİR DOKUNUŞ */
+    .custom-input::placeholder {
+        color: #6c757d;
+        opacity: 0.7;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            <div class="card shadow-lg" style="background-color: #0a0a0a; border: 1px solid #222; border-top: 4px solid #dc3545; border-radius: 12px;">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0 text-center">
+                    <h3 class="fw-bold text-white text-uppercase" style="letter-spacing: 1px;">
+                        @(Model.CustomerType == "Kurumsal" ? "FİRMA BİLGİLERİM" : "KULLANICI BİLGİLERİM")
+                    </h3>
+                    <p class="text-white-50 small">Bilgilerinizi ve şifrenizi buradan güncelleyebilirsiniz.</p>
+                </div>
+
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger mx-4 mt-3 text-center fw-bold shadow-sm">@ViewBag.ErrorMessage</div>
+                }
+                @if (ViewBag.SuccessMessage != null)
+                {
+                    <div class="alert alert-success mx-4 mt-3 text-center fw-bold shadow-sm">@ViewBag.SuccessMessage</div>
+                }
+
+                <div class="card-body p-4 p-md-5 pt-3">
+                    <form asp-controller="Account" asp-action="MyProfile" method="post">
+                        <input type="hidden" asp-for="CustomerType" />
+                        
+                        <h6 class="text-danger fw-bold mb-3 border-bottom border-secondary pb-2">İletişim Bilgileri</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">Kullanıcı Adı</label>
+                                <input asp-for="Username" class="form-control custom-input readonly-input" readonly />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">Adı Soyadı / Yetkili</label>
+                                <input asp-for="FullName" class="form-control custom-input" placeholder="Örn: Mehtap Ş. Önder" required />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">E-Posta Adresi</label>
+                                <input asp-for="Email" type="email" class="form-control custom-input" placeholder="ornek@sirket.com" required />
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-bold text-white">Telefon Numarası</label>
+                                <input asp-for="PhoneNumber" class="form-control custom-input" placeholder="05XX XXX XX XX" required />
+                            </div>
+                        </div>
+
+                        <h6 class="text-danger fw-bold mb-3 mt-4 border-bottom border-secondary pb-2">Teslimat Adresi</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">İl / Şehir</label>
+                                <input asp-for="City" class="form-control custom-input" placeholder="Örn: İstanbul" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">İlçe</label>
+                                <input asp-for="District" class="form-control custom-input" placeholder="Örn: Kadıköy" />
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-white">Açık Adres</label>
+                            <textarea asp-for="Address" class="form-control custom-input" rows="2" placeholder="Mahalle, Sokak, No..."></textarea>
+                        </div>
+
+                        @if (Model.CustomerType == "Kurumsal")
+                        {
+                            <h6 class="text-danger fw-bold mb-3 mt-4 border-bottom border-secondary pb-2">Fatura / Kurumsal Bilgiler</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-white">Firma Adı</label>
+                                    <input asp-for="CompanyName" class="form-control custom-input" placeholder="Örn: SUNMED Medikal" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold text-white">Firma Ünvanı</label>
+                                    <input asp-for="CompanyTitle" class="form-control custom-input" placeholder="Örn: SUNMED Tic. Ltd. Şti." />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label fw-bold text-white">Vergi Dairesi</label>
+                                    <input asp-for="TaxOffice" class="form-control custom-input" placeholder="Örn: İlyasbey V.D." required />
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label fw-bold text-white">Vergi Numarası</label>
+                                    <input asp-for="TaxNumber" class="form-control custom-input" placeholder="10 Haneli Vergi No" required />
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <h6 class="text-danger fw-bold mb-3 mt-4 border-bottom border-secondary pb-2">Fatura Bilgileri</h6>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold text-white">TC Kimlik Numarası</label>
+                                <input asp-for="TcNo" class="form-control custom-input" placeholder="11 Haneli TC Kimlik No" />
+                            </div>
+                        }
+
+                        <h6 class="text-danger fw-bold mb-3 mt-4 border-bottom border-secondary pb-2">Şifre Değiştir (Opsiyonel)</h6>
+                        <p class="text-white-50 small mb-3">Şifrenizi değiştirmek istemiyorsanız bu alanları boş bırakın.</p>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">Mevcut Şifreniz</label>
+                                <input asp-for="CurrentPassword" type="password" class="form-control custom-input" placeholder="••••••••" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold text-white">Yeni Şifreniz</label>
+                                <input asp-for="NewPassword" type="password" class="form-control custom-input" placeholder="••••••••" />
+                            </div>
+                        </div>
+
+                        <hr class="border-secondary my-4">
+                        
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary fw-bold px-4" style="border-radius: 30px;">İptal</a>
+                            <button type="submit" class="btn btn-danger fw-bold px-5" style="border-radius: 30px;">💾 Bilgileri Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

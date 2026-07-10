@@ -1,0 +1,605 @@
+﻿@inject SunmedMedikal.Data.ApplicationDbContext _context 
+
+<!DOCTYPE html> 
+<html lang="tr"> 
+<head> 
+    <meta charset="utf-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+    <title>@ViewData["Title"] - SUNMED Medikal</title> 
+    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> 
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> 
+    
+    <style> 
+        .collapse.show { overflow: visible !important; } 
+
+        body { 
+            margin: 0; 
+            padding: 0; 
+            overflow-x: hidden; 
+            font-family: 'Segoe UI', Roboto, sans-serif !important; 
+            background-color: #1a1a1a; 
+        } 
+
+        .skiptranslate iframe, .goog-te-banner-frame, #goog-gt-tt, 
+        .VIpgJd-ZVi9od-ORHb-OEVmcd, #google_translate_element { 
+            display: none !important; 
+        } 
+
+        /* SOL MENÜ */ 
+        .sidebar-custom { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 320px; 
+            height: 100vh; 
+            background-color: #0a0a0a; 
+            z-index: 1050; 
+            overflow-y: auto !important; 
+            overflow-x: hidden !important; 
+            padding-bottom: 80px; 
+            transition: all 0.3s ease; 
+        } 
+
+        .sidebar-custom::-webkit-scrollbar { width: 6px; } 
+        .sidebar-custom::-webkit-scrollbar-thumb { background: #dc3545; border-radius: 10px; } 
+
+        .sidebar-header img { 
+            background-color: white; 
+            border: 3px solid #dc3545 !important; 
+        } 
+
+        .main-content { 
+            margin-left: 320px; 
+            width: calc(100% - 320px); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        } 
+
+        /* ========================================== */ 
+         /* TÜM FLYOUT MENÜLER ORTAK STİL */ 
+        /* ========================================== */ 
+        .flyout-1, .flyout-2, .flyout-3, .flyout-4, .flyout-5 { 
+            display: none; 
+            position: fixed !important; 
+            min-width: 280px; /* Markalar ve uzun metinler sığsın diye genişletildi */
+            max-height: 85vh; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            padding: 10px 0; 
+            list-style: none; 
+            margin: 0; 
+            z-index: 9999 !important; 
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.8); 
+            border: 1px solid #dc3545; 
+            border-radius: 0 6px 6px 0; 
+        } 
+
+        .flyout-1 { background-color: #0a0a0a; } 
+        .flyout-2 { background-color: #111; } 
+        .flyout-3 { background-color: #1a1a1a; } 
+        .flyout-4 { background-color: #222; } 
+        .flyout-5 { background-color: #2a2a2a; } 
+
+        .flyout-1::-webkit-scrollbar, .flyout-2::-webkit-scrollbar, 
+        .flyout-3::-webkit-scrollbar, .flyout-4::-webkit-scrollbar, 
+        .flyout-5::-webkit-scrollbar { width: 4px; } 
+        .flyout-1::-webkit-scrollbar-thumb, .flyout-2::-webkit-scrollbar-thumb, 
+        .flyout-3::-webkit-scrollbar-thumb, .flyout-4::-webkit-scrollbar-thumb, 
+        .flyout-5::-webkit-scrollbar-thumb { background: #dc3545; border-radius: 4px; } 
+
+        .flyout-1 li a, .flyout-2 li a, .flyout-3 li a, 
+        .flyout-4 li a, .flyout-5 li a { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 9px 20px; 
+            color: #ccc !important; 
+            text-decoration: none; 
+            white-space: nowrap; 
+            transition: all 0.15s ease; 
+        } 
+
+        .flyout-1 li a { font-size: 0.95rem; } 
+        .flyout-2 li a { font-size: 0.9rem; } 
+        .flyout-3 li a { font-size: 0.85rem; } 
+        .flyout-4 li a { font-size: 0.8rem; } 
+        .flyout-5 li a { font-size: 0.75rem; } 
+
+        .flyout-1 li a:hover, .flyout-2 li a:hover, .flyout-3 li a:hover, 
+        .flyout-4 li a:hover, .flyout-5 li a:hover { 
+            background-color: #dc3545 !important; 
+            color: #fff !important; 
+            font-weight: 600; 
+        } 
+
+        /* ========================================== */ 
+        /* ▶ OK İŞARETİ */
+        /* ========================================== */ 
+        .arrow-icon { 
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            color: #dc3545 !important;
+            font-weight: bold !important;
+            font-size: 0.7rem !important;
+            margin-left: 4px !important;
+            flex-shrink: 0 !important;
+            line-height: 1 !important;
+        }
+
+        .nav-link {
+            padding-right: 2px !important;
+        }
+
+        /* Ana menüdeki oklar için */
+        .menu-item-l1 .d-flex .arrow-icon {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            color: #dc3545 !important;
+            font-size: 0.7rem !important;
+            margin-left: 3px !important;
+        }
+
+        /* Üst Bar */ 
+        .fixed-top-bar { 
+            position: fixed; 
+            top: 0; 
+            right: 0; 
+            width: calc(100% - 320px); 
+            z-index: 1030; 
+            background-color: #1a1a1a; 
+        } 
+        .main-content-spacer { padding-top: 110px !important; } 
+
+        /* Overlay */ 
+        .sidebar-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 1040; 
+        } 
+        .sidebar-overlay.active { display: block; } 
+
+        /* Scroll Top Butonu */ 
+        #scrollTopBtn { 
+            display: none; 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            z-index: 9999; 
+            border: none; 
+            background-color: #dc3545; 
+            color: white; 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            font-size: 1.5rem;
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+        } 
+        #scrollTopBtn:hover { 
+            background-color: #b02a37; 
+            transform: scale(1.1); 
+        }
+
+        /* YENİ: Politikalar Menü Stili */
+        .policy-section {
+            padding: 10px 15px;
+            background: #0e0e0e;
+            border-radius: 6px;
+            margin: 10px;
+            border: 1px solid #222;
+        }
+        .policy-link {
+            font-size: 0.88rem;
+            color: #aaa !important;
+            text-decoration: none;
+            display: block;
+            padding: 6px 10px;
+            transition: all 0.2s ease;
+        }
+        .policy-link:hover {
+            color: #fff !important;
+            background: #dc3545;
+            border-radius: 4px;
+            padding-left: 15px;
+        }
+
+        /* MOBİL */ 
+        @@media (max-width: 991.98px) { 
+            .sidebar-custom { 
+                left: -320px; 
+                overflow-x: hidden !important; 
+            } 
+            .sidebar-custom.active { left: 0; } 
+            .main-content { margin-left: 0; width: 100%; } 
+            .flyout-1, .flyout-2, .flyout-3, .flyout-4, .flyout-5 { 
+                 position: static !important; 
+                box-shadow: none; 
+                border: none; 
+                border-left: 2px solid #dc3545; 
+                margin-left: 15px; 
+                background-color: transparent; 
+                display: block !important; 
+            }    
+            .fixed-top-bar { width: 100%; } 
+            .main-content-spacer { padding-top: 180px !important; } 
+            .arrow-icon { display: none !important; } 
+            } 
+        </style>
+</head> 
+
+<body> 
+    <div class="sidebar-overlay" id="sidebarOverlay"></div> 
+
+    <nav class="sidebar-custom shadow-lg d-flex flex-column"> 
+        
+        <div class="sidebar-header text-center pt-4 px-2"> 
+            <img src="/images/products/Logo.jpeg" alt="SUNMED Logo" class="shadow-sm" style="max-width: 120px; border-radius: 50%; object-fit: cover;"> 
+            <h4 class="mt-3 text-white fw-bold">SUNMED <span class="text-danger">Medikal</span></h4> 
+            <p class="small text-white-50 mb-0">& Global Laboratuvar Marketi</p> 
+        </div> 
+
+        <hr style="border-color: #333; margin: 0 20px 20px 20px;"> 
+
+        <ul class="nav flex-column mb-auto w-100 px-2" id="mainMenu"> 
+            
+            <li class="nav-item mb-1"> 
+                <a class="nav-link text-white fw-bold" asp-controller="Home" asp-action="Index">🏠 Anasayfa</a> 
+            </li> 
+
+            @{ 
+                // ============================================
+                // TÜRKÇE KARAKTER NORMALİZASYON (Geliştirildi)
+                // ============================================
+                bool SafeEquals(string a, string b) { 
+                    if (string.IsNullOrWhiteSpace(a) || string.IsNullOrWhiteSpace(b)) return false; 
+                    string N(string t) {
+                        var sb = new System.Text.StringBuilder(); 
+                        foreach (char c in t) if (char.IsLetterOrDigit(c)) sb.Append(char.ToLowerInvariant(c)); 
+                        return sb.ToString().Replace("ı","i").Replace("ğ","g").Replace("ü","u").Replace("ş","s").Replace("ö","o").Replace("ç","c").Trim(); 
+                    } 
+                    return N(a) == N(b); 
+                } 
+
+                var mainCategories = _context.MainCategories.OrderBy(m => m.Name).ToList(); 
+                var subCategories = _context.SubCategories.ToList(); 
+                var subSubCategories = _context.SubSubCategories.ToList(); 
+                var subSubSubCategories = new List<SunmedMedikal.Models.SubSubSubCategory>(); 
+                var subSubSubSubCategories = new List<SunmedMedikal.Models.SubSubSubSubCategory>(); 
+                try { 
+                    subSubSubCategories = _context.SubSubSubCategories.ToList(); 
+                    subSubSubSubCategories = _context.SubSubSubSubCategories.ToList(); 
+                } catch { } 
+
+                int idx = 0; 
+
+                foreach (var main in mainCategories) 
+                { 
+                    idx++; 
+                    var subs1 = subCategories.Where(s => SafeEquals(s.MainCategory, main.Name)).OrderBy(s => s.Name).ToList(); 
+                    bool hasSub1 = subs1.Any(); 
+                    bool isReferans = SafeEquals(main.Name, "Referans Standartları") || SafeEquals(main.Name, "Referans Standartlari");
+
+                    <li class="nav-item border-bottom border-dark menu-item-l1" data-idx="@idx"> 
+                        <div class="d-flex justify-content-between align-items-center pe-3"> 
+                            <a class="nav-link text-white text-truncate flex-grow-1" href="/Product/Category?main=@Uri.EscapeDataString(main.Name)"> 
+                                @main.Name 
+                            </a> 
+                            @if(hasSub1 || isReferans) { <span class="arrow-icon">▶</span> } 
+                        </div> 
+
+                        @if(hasSub1 || isReferans) 
+                        { 
+                            <ul class="flyout-1" id="fly1-@idx"> 
+                                
+                                @if(isReferans)
+                                {
+                                    <li class="menu-item-l2"><a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)&brand=LGC"><span class="text-truncate">🔬 LGC Standards Ürünleri</span></a></li>
+                                    <li class="menu-item-l2"><a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)&brand=USP"><span class="text-truncate">💊 USP Referans Standartları</span></a></li>
+                                    <li class="menu-item-l2"><a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)&brand=EDQM"><span class="text-truncate">🇪🇺 EDQM Farmakope Ürünleri</span></a></li>
+                                }
+
+                                @foreach (var sub1 in subs1) 
+                                { 
+                                    var subs2 = subSubCategories.Where(ss => SafeEquals(ss.SubCategory, sub1.Name) && SafeEquals(ss.MainCategory, main.Name)).OrderBy(ss => ss.Name).ToList(); 
+                                    bool hasSub2 = subs2.Any(); 
+
+                                    <li class="menu-item-l2"> 
+                                        <a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)&sub=@Uri.EscapeDataString(sub1.Name)"> 
+                                            <span class="text-truncate">@sub1.Name</span> 
+                                            @if(hasSub2) { <span class="arrow-icon">▶</span> } 
+                                        </a> 
+
+                                        @if(hasSub2) 
+                                        { 
+                                            <ul class="flyout-2"> 
+                                                @foreach (var sub2 in subs2) 
+                                                { 
+                                                    var subs3 = subSubSubCategories.Where(sss => SafeEquals(sss.SubSubCategory, sub2.Name) && SafeEquals(sss.SubCategory, sub1.Name) && SafeEquals(sss.MainCategory, main.Name)).OrderBy(sss => sss.Name).ToList(); 
+                                                    bool hasSub3 = subs3.Any(); 
+
+                                                    <li class="menu-item-l3"> 
+                                                        <a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)&sub=@Uri.EscapeDataString(sub1.Name)&subsub=@Uri.EscapeDataString(sub2.Name)"> 
+                                                            <span class="text-truncate">@sub2.Name</span> 
+                                                            @if(hasSub3) { <span class="arrow-icon">▶</span> } 
+                                                        </a> 
+
+                                                        @if(hasSub3) 
+                                                        { 
+                                                            <ul class="flyout-3"> 
+                                                                @foreach (var sub3 in subs3) 
+                                                                { 
+                                                                    var subs4 = subSubSubSubCategories.Where(ssss => SafeEquals(ssss.SubSubSubCategory, sub3.Name) && SafeEquals(ssss.SubSubCategory, sub2.Name) && SafeEquals(ssss.SubCategory, sub1.Name) && SafeEquals(ssss.MainCategory, main.Name)).OrderBy(ssss => ssss.Name).ToList(); 
+                                                                    bool hasSub4 = subs4.Any(); 
+
+                                                                    <li class="menu-item-l4"> 
+                                                                        <a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)&sub=@Uri.EscapeDataString(sub1.Name)&subsub=@Uri.EscapeDataString(sub2.Name)&subsubsub=@Uri.EscapeDataString(sub3.Name)"> 
+                                                                            <span class="text-truncate">@sub3.Name</span> 
+                                                                            @if(hasSub4) { <span class="arrow-icon">▶</span> } 
+                                                                        </a> 
+
+                                                                        @if(hasSub4) 
+                                                                        { 
+                                                                            <ul class="flyout-4"> 
+                                                                                @foreach (var sub4 in subs4) 
+                                                                                { 
+                                                                                    <li class="menu-item-l5"> 
+                                                                                        <a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)&sub=@Uri.EscapeDataString(sub1.Name)&subsub=@Uri.EscapeDataString(sub2.Name)&subsubsub=@Uri.EscapeDataString(sub3.Name)&subsubsubsub=@Uri.EscapeDataString(sub4.Name)"> 
+                                                                                            <span class="text-truncate">@sub4.Name</span> 
+                                                                                        </a> 
+                                                                                    </li> 
+                                                                                } 
+                                                                            </ul> 
+                                                                        } 
+                                                                    </li> 
+                                                                } 
+                                                            </ul> 
+                                                        } 
+                                                    </li> 
+                                                } 
+                                                <li style="border-top:1px solid #333;margin-top:5px;"> 
+                                                    <a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)&sub=@Uri.EscapeDataString(sub1.Name)&subsub=@Uri.EscapeDataString(sub1.Name)" class="text-danger fw-bold py-1" style="font-size:0.8rem;padding-left:20px;">↳ Tümü</a> 
+                                                </li> 
+                                            </ul> 
+                                        } 
+                                    </li> 
+                                } 
+                                <li style="border-top:1px solid #333;margin-top:5px;"> 
+                                    <a href="/Product/Category?main=@Uri.EscapeDataString(main.Name)" class="text-danger fw-bold py-2" style="font-size:0.9rem;padding-left:20px;">↳ Tümünü Gör</a> 
+                                </li> 
+                            </ul> 
+                        } 
+                    </li> 
+                } 
+            } 
+            
+            <li class="nav-item mt-2"> 
+                <a class="nav-link text-white fw-bold" asp-controller="Brand" asp-action="Index">🏷️ Markalarımız</a> 
+            </li> 
+
+            <hr class="border-secondary mt-4 mb-3 opacity-25" style="width:80%;margin-left:10%;"> 
+
+            <li class="nav-item mb-2" style="list-style:none;"> 
+                <a asp-controller="Home" asp-action="About" class="nav-link text-white-50 py-1" style="font-size:0.95rem;">🏢 Kurumsal / Hakkımızda</a> 
+            </li> 
+            <li class="nav-item mb-3" style="list-style:none;"> 
+                <a asp-controller="Home" asp-action="Contact" class="nav-link text-white-50 py-1" style="font-size:0.95rem;">📞 İletişim & Destek</a> 
+            </li> 
+        </ul> 
+
+        <div class="currency-widget p-3 mx-3 mb-4 mt-3 rounded shadow-lg" style="background-color:#111;border:1px solid #dc3545;font-size:0.85rem;"> 
+            <div class="d-flex align-items-center mb-2 border-bottom border-secondary pb-2"> 
+                <span class="text-white small fw-bold">📈 CANLI DÖVİZ KURLARI</span> 
+            </div> 
+            <div class="d-flex justify-content-between mb-1"> 
+                <span class="text-white-50 small fw-bold">1 USD</span> 
+                <span id="rate-usd" class="text-success fw-bold small">Yükleniyor...</span> 
+            </div> 
+            <div class="d-flex justify-content-between mb-2"> 
+                <span class="text-white-50 small fw-bold">1 EURO</span> 
+                <span id="rate-eur" class="text-warning fw-bold small">Yükleniyor...</span> 
+            </div> 
+            <div class="text-center mt-2 pt-2 border-top border-secondary" style="font-size:0.70rem;color:#888;"> 
+                Son Güncelleme: <span id="rate-date">--:--</span> 
+            </div> 
+        </div> 
+    </nav> 
+
+    <div class="main-content bg-dark text-white"> 
+        <div class="fixed-top-bar shadow-lg"> 
+            <header class="top-bar p-3 d-flex align-items-center border-bottom border-secondary" style="background-color:#1a1a1a;"> 
+                <button class="btn btn-outline-danger d-lg-none me-3" id="sidebarToggle">☰ Menü</button> 
+                <div class="flex-grow-1 mx-4 d-none d-md-block"> 
+                    <form asp-controller="Product" asp-action="Search" method="get" class="d-flex w-100 position-relative"> 
+                        <input type="text" name="q" class="form-control bg-dark border-secondary text-white shadow-sm" placeholder="🔍 Ürün ara..." style="border-radius:20px;padding-left:20px;height:42px;" required> 
+                        <button type="submit" class="btn btn-danger shadow-sm position-absolute" style="right:0;top:0;bottom:0;border-radius:0 20px 20px 0;width:60px;">Ara</button> 
+                    </form> 
+                </div> 
+                <div class="d-flex gap-3 align-items-center ms-auto"> 
+                    <div id="google_translate_element"></div> 
+                    <div class="dropdown notranslate"> 
+                        <button id="langDropdownBtn" class="btn btn-dark fw-bold dropdown-toggle border-secondary shadow-sm" type="button" data-bs-toggle="dropdown" style="border-radius:20px;">🇹🇷 TR</button> 
+                        <ul class="dropdown-menu dropdown-menu-dark shadow-lg mt-2 p-1" style="border:1px solid #dc3545;border-radius:10px;"> 
+                            <li><a class="dropdown-item fw-bold text-white py-2" href="#" onclick="changeLanguage('tr');return false;">🇹🇷 Türkçe</a></li> 
+                            <li><a class="dropdown-item fw-bold text-white py-2" href="#" onclick="changeLanguage('en');return false;">🇬🇧 English</a></li> 
+                            <li><a class="dropdown-item fw-bold text-white py-2" href="#" onclick="changeLanguage('fr');return false;">🇫🇷 Français</a></li> 
+                            <li><a class="dropdown-item fw-bold text-white py-2" href="#" onclick="changeLanguage('ar');return false;">🇸🇦 العربية</a></li> 
+                        </ul> 
+                    </div> 
+                    <a class="btn btn-outline-danger fw-bold px-4 shadow-sm" asp-controller="Cart" asp-action="Index" style="border-radius:20px;">🛒 Sepetim</a> 
+                    @if (User.Identity != null && User.Identity.IsAuthenticated) 
+                    { 
+                        @if (User.IsInRole("Admin")) 
+                        { 
+                            <div class="dropdown"> 
+                                <button class="btn btn-danger fw-bold text-white dropdown-toggle px-4 shadow-sm" type="button" data-bs-toggle="dropdown" style="border-radius:20px;">⚙️ Admin</button> 
+                                <ul class="dropdown-menu dropdown-menu-dark shadow-lg mt-2" style="border:1px solid #dc3545;border-radius:10px;"> 
+                                    <li><a class="dropdown-item fw-bold text-white py-2" asp-controller="Admin" asp-action="Index">📋 Ürün Yönetimi</a></li> 
+                                    <li><a class="dropdown-item fw-bold text-info py-2" asp-controller="Admin" asp-action="MainCategories">📁 Ana Kategoriler</a></li> 
+                                    <li><a class="dropdown-item fw-bold text-warning py-2" asp-controller="Admin" asp-action="SubCategories">⚙️ Alt Kategoriler</a></li> 
+                                    <li><a class="dropdown-item fw-bold text-danger py-2" asp-controller="Admin" asp-action="SubSubCategories">🛠️ 3. Alt Kategoriler</a></li> 
+                                    <li><a class="dropdown-item fw-bold text-primary py-2" asp-controller="Admin" asp-action="SubSubSubCategories">🔥 4. Alt Kategoriler</a></li> 
+                                    <li><a class="dropdown-item fw-bold text-info py-2" asp-controller="Admin" asp-action="SubSubSubSubCategories">🚀 5. Alt Kategoriler</a></li> 
+                                    <li><hr class="dropdown-divider border-secondary"></li> 
+                                    <li><a class="dropdown-item fw-bold text-success py-2" asp-controller="Admin" asp-action="Create">➕ Yeni Ürün Ekle</a></li> 
+                                </ul> 
+                            </div> 
+                            <a class="btn btn-warning fw-bold text-dark px-4 shadow-sm" asp-controller="Admin" asp-action="Orders" style="border-radius:20px;">📦 Siparişler</a> 
+                            <a class="btn btn-dark fw-bold px-3 shadow-sm border-secondary" asp-controller="Account" asp-action="Logout" style="border-radius:20px;">Çıkış</a> 
+                        } 
+                        else 
+                        { 
+                            <div class="dropdown"> 
+                                <button class="btn btn-dark fw-bold text-danger dropdown-toggle border-secondary shadow-sm" type="button" data-bs-toggle="dropdown" style="border-radius:20px;">👤 @User.Identity.Name</button> 
+                                <ul class="dropdown-menu dropdown-menu-dark shadow-lg mt-2" style="border:1px solid #dc3545;border-radius:10px;"> 
+                                    <li><a class="dropdown-item fw-bold text-white py-2" asp-controller="Account" asp-action="MyProfile">⚙️ Profilim</a></li> 
+                                    <li><hr class="dropdown-divider border-secondary"></li> 
+                                    <li><a class="dropdown-item fw-bold text-white py-2" asp-controller="Account" asp-action="MyOrders">📦 Siparişlerim</a></li> 
+                                    <li><a class="dropdown-item fw-bold text-danger py-2" asp-controller="Account" asp-action="Logout">🚪 Çıkış</a></li> 
+                                </ul> 
+                            </div> 
+                        } 
+                    } 
+                    else 
+                    { 
+                        <a class="btn btn-danger fw-bold px-4 shadow-sm" asp-controller="Account" asp-action="Login" style="border-radius:20px;">👤 Giriş Yap</a> 
+                    } 
+                </div> 
+            </header> 
+        </div> 
+        <main role="main" class="p-4 flex-grow-1 main-content-spacer"> 
+            @RenderBody() 
+        </main> 
+    </div> 
+
+    <button onclick="scrollToTop()" id="scrollTopBtn" title="Yukarı Dön">▲</button> 
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script> 
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> 
+
+    <script> 
+        function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'tr',includedLanguages:'tr,en,fr,ar',layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},'google_translate_element');} 
+        function changeLanguage(lang){document.cookie="googtrans=/tr/"+lang+"; path=/";document.cookie="googtrans=/tr/"+lang+"; domain=."+document.domain+"; path=/";location.reload();} 
+
+        const sidebar=document.querySelector('.sidebar-custom'); 
+        const overlay=document.getElementById('sidebarOverlay'); 
+        const toggleBtn=document.getElementById('sidebarToggle'); 
+        function toggleSidebar(){sidebar.classList.toggle('active');overlay.classList.toggle('active');} 
+        if(toggleBtn)toggleBtn.addEventListener('click',toggleSidebar); 
+        if(overlay)overlay.addEventListener('click',toggleSidebar); 
+
+        const SBW=320; 
+        let openFlyouts=[]; 
+        let hideTimers=[]; 
+
+        function showFly(fly, trig, parentFly){ 
+            if(!fly||window.innerWidth<992)return; 
+            const tr=trig.getBoundingClientRect(); 
+            let left=SBW; 
+            if(parentFly){ 
+                const pr=parentFly.getBoundingClientRect(); 
+                left=pr.right; 
+            } 
+            const fw=fly.offsetWidth||280; 
+            if(left+fw>window.innerWidth-10){ 
+                left=(parentFly?parentFly.getBoundingClientRect().left:SBW)-fw; 
+            } 
+            fly.style.position='fixed'; 
+            fly.style.top=tr.top+'px'; 
+            fly.style.left=left+'px'; 
+            fly.style.display='block'; 
+            if(!openFlyouts.includes(fly))openFlyouts.push(fly); 
+        } 
+
+        function hideFly(fly){ 
+            if(!fly)return; 
+            fly.style.display='none'; 
+            openFlyouts=openFlyouts.filter(f=>f!==fly); 
+            const children=fly.querySelectorAll('.flyout-2,.flyout-3,.flyout-4,.flyout-5'); 
+            children.forEach(c=>{c.style.display='none';openFlyouts=openFlyouts.filter(f=>f!==c);}); 
+        } 
+
+        function hideAll(){ 
+            openFlyouts.forEach(f=>{if(f)f.style.display='none';}); 
+            openFlyouts=[]; 
+            hideTimers.forEach(t=>clearTimeout(t)); 
+            hideTimers=[]; 
+        } 
+
+        function bindFlyout(itemSelector, flyoutSelector, parentFlyoutSelector){ 
+            document.querySelectorAll(itemSelector).forEach(item=>{ 
+                const flyout=item.querySelector(flyoutSelector); 
+                if(!flyout)return; 
+                const parentFly=parentFlyoutSelector?item.closest(parentFlyoutSelector):null; 
+                let t; 
+
+                item.addEventListener('mouseenter',function(e){ 
+                    clearTimeout(t); 
+                    hideTimers=hideTimers.filter(x=>x!==t); 
+                    const siblings=item.parentElement.querySelectorAll(flyoutSelector); 
+                    siblings.forEach(s=>{if(s!==flyout&&openFlyouts.includes(s))hideFly(s);}); 
+                    showFly(flyout,item,parentFly); 
+                }); 
+
+                item.addEventListener('mouseleave',function(e){ 
+                    t=setTimeout(()=>{ 
+                        if(!flyout.matches(':hover'))hideFly(flyout); 
+                    },200); 
+                    hideTimers.push(t); 
+                }); 
+
+                flyout.addEventListener('mouseenter',function(){ 
+                    clearTimeout(t); 
+                    hideTimers=hideTimers.filter(x=>x!==t); 
+                }); 
+
+                flyout.addEventListener('mouseleave',function(){ 
+                    t=setTimeout(()=>hideFly(flyout),200); 
+                    hideTimers.push(t); 
+                }); 
+            }); 
+        } 
+
+        bindFlyout('.menu-item-l1','.flyout-1',null);          
+        bindFlyout('.menu-item-l2','.flyout-2','.flyout-1');     
+        bindFlyout('.menu-item-l3','.flyout-3','.flyout-2');     
+        bindFlyout('.menu-item-l4','.flyout-4','.flyout-3');     
+
+        document.addEventListener('click',function(e){ 
+            if(!e.target.closest('.sidebar-custom'))hideAll(); 
+        }); 
+
+        document.addEventListener('keydown',function(e){ 
+            if(e.key==='Escape')hideAll(); 
+        }); 
+
+        function fetchRates(){ 
+            fetch('https://api.exchangerate-api.com/v4/latest/USD') 
+                .then(r=>r.json()).then(d=>{ 
+                    document.getElementById('rate-usd').innerText=d.rates.TRY.toFixed(4)+" TL"; 
+                    document.getElementById('rate-eur').innerText=(d.rates.TRY/d.rates.EUR).toFixed(4)+" TL"; 
+                    document.getElementById('rate-date').innerText=new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}); 
+                }).catch(()=>{ 
+                    document.getElementById('rate-usd').innerText="33.0000 TL"; 
+                    document.getElementById('rate-eur').innerText="36.0000 TL"; 
+                }); 
+        } 
+        fetchRates();setInterval(fetchRates,60000); 
+
+        let stb=document.getElementById("scrollTopBtn"); 
+        window.onscroll=function(){stb.style.display=(document.body.scrollTop>300||document.documentElement.scrollTop>300)?"flex":"none";}; 
+        function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});} 
+    </script> 
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> 
+    @await RenderSectionAsync("Scripts", required: false) 
+</body> 
+</html>

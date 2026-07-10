@@ -1,0 +1,116 @@
+@model List<SunmedMedikal.Models.Order>
+@{
+    ViewData["Title"] = "Sipariş Yönetimi";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    .order-table-card {
+        background-color: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-top: 4px solid #dc3545;
+        border-radius: 12px;
+    }
+    .table thead th { background-color: #121212; color: #dc3545 !important; border-bottom: 2px solid #333; font-weight: bold; }
+    .table td { vertical-align: middle; border-bottom: 1px solid #dee2e6; color: #000 !important; font-weight: 500; }
+    .status-badge { border-radius: 20px; padding: 5px 15px; font-size: 0.8rem; font-weight: bold; color: #fff !important; }
+    .customer-note-row { background-color: #fff5f5 !important; }
+    .note-text { color: #dc3545 !important; font-weight: bold; }
+</style>
+
+<div class="container-fluid mt-5 mb-5 px-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h2 class="text-white fw-bold text-uppercase">📦 SİPARİŞ <span class="text-danger">YÖNETİMİ</span></h2>
+            <p class="text-white-50">Sipariş durumlarını güncelleyebilir ve detayları takip edebilirsiniz.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <span class="badge bg-dark border border-secondary p-3">Toplam Sipariş: @Model.Count</span>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success fw-bold text-center shadow-sm mb-4">
+            ✅ @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="order-table-card shadow-lg p-4 bg-white"> 
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Müşteri / Firma</th>
+                        <th>İletişim</th>
+                        <th>Adres Detayı</th>
+                        <th>Tutar (TL)</th>
+                        <th>Durum</th>
+                        <th class="text-center">Hızlı İşlem</th>
+                        <th class="text-center">Detay</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td class="small">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <div class="fw-bold fs-5">@order.CustomerName.ToUpper()</div>
+                                <div class="text-muted small">ID: #@order.Id</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold"><i class="text-danger">📞</i> @order.Phone</div>
+                            </td>
+                            <td style="max-width: 300px;">
+                                <div class="small">@order.Address</div>
+                                <div class="text-danger fw-bold mt-1">@order.District.ToUpper() / @order.City.ToUpper()</div>
+                            </td>
+                            <td class="fw-bold text-success fs-5">@order.TotalAmount.ToString("N2") TL</td>
+                            <td>
+                                @if(order.Status == "Onay Bekliyor") { <span class="status-badge bg-warning text-dark">Onay Bekliyor</span> }
+                                else if(order.Status == "Onaylandı") { <span class="status-badge bg-info text-white">Onaylandı</span> }
+                                else if(order.Status == "Hazırlanıyor") { <span class="status-badge bg-primary text-white">Hazırlanıyor</span> }
+                                else if(order.Status == "Kargolandı") { <span class="status-badge bg-success text-white">Kargolandı</span> }
+                                else if(order.Status == "Sipariş Tamamlandı") { <span class="status-badge bg-dark text-white">Sipariş Tamamlandı</span> }
+                                else if(order.Status == "İptal Edildi") { <span class="status-badge bg-danger text-white">İptal Edildi</span> }
+                                else { <span class="status-badge bg-secondary text-white">@order.Status</span> }
+                            </td>
+                            <td class="text-center">
+                                <form asp-controller="Admin" asp-action="UpdateOrderStatus" method="post" class="d-flex gap-2">
+                                    <input type="hidden" name="orderId" value="@order.Id" />
+                                    <input type="hidden" name="notifyCustomer" value="false" />
+                                    <input type="hidden" name="returnPage" value="Orders" />
+                                    
+                                    <select name="status" class="form-select form-select-sm border-danger" style="width: 170px;">
+                                        <option value="Onay Bekliyor" selected="@(order.Status == "Onay Bekliyor")">⏳ Onay Bekliyor</option>
+                                        <option value="Onaylandı" selected="@(order.Status == "Onaylandı")">👍 Onaylandı</option>
+                                        <option value="Hazırlanıyor" selected="@(order.Status == "Hazırlanıyor")">📦 Hazırlanıyor</option>
+                                        <option value="Kargolandı" selected="@(order.Status == "Kargolandı")">🚚 Kargolandı</option>
+                                        <option value="Sipariş Tamamlandı" selected="@(order.Status == "Sipariş Tamamlandı")">✅ Sipariş Tamamlandı</option>
+                                        <option value="İptal Edildi" selected="@(order.Status == "İptal Edildi")">❌ İptal Edildi</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-danger">Güncelle</button>
+                                </form>
+                            </td>
+                            <td class="text-center">
+                                <a asp-controller="Admin" asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-dark">Görüntüle</a>
+                            </td>
+                        </tr>
+                        
+                        @if (!string.IsNullOrEmpty(order.OrderNotes))
+                        {
+                            <tr class="customer-note-row">
+                                <td colspan="8" class="py-2">
+                                    <span class="text-danger fw-bold">📝 Müşteri Notu:</span> 
+                                    <span class="note-text" style="white-space: pre-line;">@order.OrderNotes</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

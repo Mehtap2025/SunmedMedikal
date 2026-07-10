@@ -1,0 +1,21 @@
+@model SunmedMedikal.Models.Order
+<div class="container mt-5 text-white">
+    <div class="card bg-dark border-secondary p-4">
+        <h3 class="text-danger fw-bold border-bottom pb-3">SİPARİŞ DETAYI #@Model.Id</h3>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <p><strong>Tarih:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                <p><strong>Durum:</strong> <span class="badge bg-warning text-dark">@Model.Status</span></p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <h4 class="text-success fw-bold">Toplam: @Model.TotalAmount.ToString("N2") TL</h4>
+            </div>
+        </div>
+        <hr class="border-secondary">
+        <h5>📦 Ürün Listesi</h5>
+        <p class="text-white-50">@Model.OrderNotes</p> <div class="mt-4">
+            <a asp-action="MyOrders" class="btn btn-outline-light btn-sm">Listeye Dön</a>
+            <a asp-action="Invoice" asp-route-id="@Model.Id" target="_blank" class="btn btn-danger btn-sm px-4 shadow">📄 FATURA GÖRÜNTÜLE</a>
+        </div>
+    </div>
+</div>

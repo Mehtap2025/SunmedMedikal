@@ -1,0 +1,83 @@
+@model SunmedMedikal.Models.Order
+@{
+    ViewData["Title"] = "Sipariş Yönetimi";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    .admin-card { background-color: #0a0a0a; border: 1px solid #333; border-radius: 12px; }
+</style>
+
+<div class="container mt-5 mb-5 text-white">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-uppercase">SİPARİŞ <span class="text-danger">YÖNETİMİ</span></h2>
+        <a asp-action="Orders" class="btn btn-outline-secondary rounded-pill fw-bold px-4">🔙 Siparişlere Dön</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success fw-bold text-center shadow-sm">
+            ✅ @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger fw-bold text-center shadow-sm">
+            ❌ @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="admin-card p-4 shadow-lg">
+                <h5 class="text-danger fw-bold border-bottom border-secondary pb-2 mb-3">Sipariş Bilgileri (#@Model.Id)</h5>
+                
+                <p><strong>Müşteri:</strong> @Model.CustomerName</p>
+                <p><strong>Tarih:</strong> @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</p>
+                <p><strong>Toplam Tutar:</strong> <span class="text-success fw-bold">@Model.TotalAmount.ToString("N2") TL</span></p>
+                
+                <h5 class="text-danger fw-bold border-bottom border-secondary pb-2 mt-4 mb-3">Sipariş Notu ve Ürünler</h5>
+                <div class="p-3 bg-dark rounded border border-secondary">
+                    <p style="white-space: pre-line;" class="mb-0 text-white-50">@Model.OrderNotes</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="admin-card p-4 shadow-lg" style="border-top: 4px solid #ffc107;">
+                <h5 class="text-warning fw-bold border-bottom border-secondary pb-2 mb-3">Durum Güncelle & Bildirim Gönder</h5>
+                
+                <form asp-controller="Admin" asp-action="UpdateOrderStatus" method="post">
+                    <input type="hidden" name="orderId" value="@Model.Id" />
+                    <input type="hidden" name="notifyCustomer" value="true" />
+                    <input type="hidden" name="returnPage" value="OrderDetails" />
+                    
+                    <div class="mb-4">
+                        <label class="form-label text-white-50">Mevcut Durum:</label>
+                        <h4 class="text-white fw-bold">@Model.Status</h4>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Yeni Durum Seçin</label>
+                        <select name="status" class="form-select bg-dark text-white border-secondary form-select-lg">
+                            <option value="Onay Bekliyor" selected="@(Model.Status == "Onay Bekliyor")">⏳ Onay Bekliyor</option>
+                            <option value="Onaylandı" selected="@(Model.Status == "Onaylandı")">👍 Onaylandı</option>
+                            <option value="Hazırlanıyor" selected="@(Model.Status == "Hazırlanıyor")">📦 Hazırlanıyor</option>
+                            <option value="Kargolandı" selected="@(Model.Status == "Kargolandı")">🚚 Kargolandı</option>
+                            <option value="Sipariş Tamamlandı" selected="@(Model.Status == "Sipariş Tamamlandı")">✅ Sipariş Tamamlandı</option>
+                            <option value="İptal Edildi" selected="@(Model.Status == "İptal Edildi")">❌ İptal Edildi</option>
+                        </select>
+                    </div>
+
+                    <div class="alert bg-dark border-secondary text-white-50 small mb-4">
+                        <i class="fas fa-info-circle text-info"></i> Durumu güncellediğiniz an müşteriye otomatik olarak E-Posta (ve SMS) gönderilecektir.
+                    </div>
+
+                    <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold rounded-pill text-dark shadow-sm">
+                        💾 Güncelle ve Müşteriye Bildir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

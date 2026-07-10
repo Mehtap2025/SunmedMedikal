@@ -1,0 +1,269 @@
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SunmedMedikal.Models.SharedResource> SharedLocalizer
+
+@model SunmedMedikal.Models.Product 
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet" />
+
+<style>
+    /* TRENDYOL TİPİ SEKME (TAB) TASARIMI */
+    .nav-tabs {
+        border-bottom: 1px solid #333;
+    }
+    .nav-tabs .nav-link {
+        color: #888;
+        font-weight: 600;
+        font-size: 1.05rem;
+        border: none;
+        border-bottom: 3px solid transparent;
+        padding: 15px 20px;
+        transition: all 0.3s ease;
+        background: transparent;
+    }
+    .nav-tabs .nav-link:hover {
+        color: #fff;
+        border-color: #555;
+    }
+    .nav-tabs .nav-link.active {
+        color: #dc3545;
+        border-color: #dc3545;
+        background: transparent;
+    }
+    .tab-content {
+        background-color: #111;
+        border: 1px solid #222;
+        border-top: none;
+        border-radius: 0 0 10px 10px;
+        padding: 30px;
+    }
+    
+    /* ======================================================== */
+    /* YENİ: SUMMERNOTE (WYSIWYG) KESİN KARANLIK TEMA DÜZELTMESİ */
+    /* ======================================================== */
+    
+    /* Kopyala-yapıştır ile gelen tüm iğrenç beyaz arka planları ezer ve yazıları okunaklı gri yapar */
+    .tab-content .bg-dark * {
+        background-color: transparent !important; 
+        color: #d1d1d1 !important; 
+        font-family: inherit !important;
+    }
+    
+    /* Tabloları karanlık temaya uygun jilet gibi bir tasarıma zorlar */
+    .tab-content table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-top: 20px !important;
+        margin-bottom: 20px !important;
+        background-color: #1a1a1a !important;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .tab-content table th, .tab-content table td {
+        border: 1px solid #444 !important;
+        padding: 12px 15px !important;
+        vertical-align: middle;
+    }
+    .tab-content table th {
+        background-color: #222 !important;
+        color: #fff !important;
+        font-weight: bold !important;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+    /* Satır üzerine gelince hafif aydınlanma efekti */
+    .tab-content table tr:hover td {
+        background-color: #2a2a2a !important;
+    }
+    
+    /* Liste işaretlerini düzeltir */
+    .tab-content ul { list-style-type: disc !important; padding-left: 25px !important; margin-bottom: 15px !important; }
+    .tab-content ol { list-style-type: decimal !important; padding-left: 25px !important; margin-bottom: 15px !important; }
+    /* ======================================================== */
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row mb-5">
+        
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="card border-secondary shadow-sm" style="background-color: #0a0a0a;">
+                <a id="fancyboxMain" href="@Model.ImageUrl" data-fancybox="gallery" data-caption="@Model.Name">
+                    <img id="mainImage" src="@Model.ImageUrl" class="card-img-top p-3" alt="@Model.Name" style="background: white; border-radius: 8px; width: 100%; object-fit: contain; max-height: 500px; cursor: zoom-in;">
+                </a>
+            </div>
+            
+            @if(!string.IsNullOrEmpty(Model.AdditionalImageUrls))
+            {
+                <div class="d-flex gap-2 mt-3 overflow-auto pb-2" style="scrollbar-width: thin;">
+                    <a href="@Model.ImageUrl" data-fancybox="gallery" class="d-none"></a>
+                    <img src="@Model.ImageUrl" onclick="changeMainImage(this.src)" class="shadow-sm" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 2px solid #dc3545; border-radius: 5px; background: white;">
+                    
+                    @foreach(var img in Model.AdditionalImageUrls.Split(','))
+                    {
+                        if(!string.IsNullOrWhiteSpace(img))
+                        {
+                            <a href="@img" data-fancybox="gallery" class="d-none"></a>
+                            <img src="@img" onclick="changeMainImage(this.src)" class="shadow-sm" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 1px solid #555; border-radius: 5px; background: white;" onmouseover="this.style.borderColor='#dc3545'" onmouseout="this.style.borderColor='#555'">
+                        }
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="col-md-6 ps-md-5">
+            <h2 class="display-6 fw-bold text-white mb-3">@Model.Name</h2>
+            <h3 class="text-danger fw-bold mb-4">@Model.Price.ToString("N2") @Model.Currency</h3>
+            
+            <p class="lead text-white-50 mb-4" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-wrap;">@Model.Description</p>
+            
+            <hr class="border-secondary mb-4">
+            
+            <ul class="list-unstyled text-white-50 mb-4">
+                <li class="mb-2"><strong class="text-white">@SharedLocalizer["Marka"]:</strong> @(Model.Brand ?? "Belirtilmemiş")</li>
+                <li class="mb-2"><strong class="text-white">@SharedLocalizer["Stok Kodu"]:</strong> <span class="text-info fw-bold">@(Model.ProductCode ?? "Belirtilmemiş")</span></li>
+                <li class="mb-2"><strong class="text-white">@SharedLocalizer["Stok Durumu"]:</strong> @Model.StockQuantity Adet</li>
+                <li class="mb-2"><strong class="text-white">@SharedLocalizer["Teslimat"]:</strong> @SharedLocalizer["Tüm Türkiye'ye gönderim"]</li>
+            </ul>
+
+            @if(Model.Price == 0 || Model.Price == 0.00m || Model.IsQuoteOnly)
+            {
+                <div class="mt-4 p-4 border border-warning rounded" style="background-color: #1a1a05; border-left: 5px solid #ffc107 !important;">
+                    <h5 class="text-warning fw-bold mb-3">⚠️ Bu Ürün İçin Fiyat Teklifi Alınmalıdır</h5>
+                    <p class="text-white-50 small mb-4">Bu ürün, kurumsal alım şartlarına veya döviz kurlarına göre projelendirilmektedir. Özel teklifiniz için lütfen bizimle iletişime geçin.</p>
+                    
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-3">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        
+                        <div class="input-group" style="width: 130px;">
+                            <span class="input-group-text bg-dark text-white fw-bold border-secondary">@SharedLocalizer["Adet"]</span>
+                            <input type="number" name="quantity" value="1" min="1" max="9999" class="form-control bg-dark text-white text-center fw-bold border-warning text-warning" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-warning text-dark btn-lg px-4 fw-bold shadow-sm">📄 Teklif Listesine Ekle</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <div class="mt-4 p-3 border border-secondary rounded" style="background-color: #111;">
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex flex-wrap align-items-center gap-3 mb-3">
+                     <input type="hidden" name="productId" value="@Model.Id" />
+
+                     <div class="input-group" style="width: 130px;">
+                         <span class="input-group-text bg-dark text-white fw-bold border-secondary">@SharedLocalizer["Adet"]</span>
+                         <input type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity" class="form-control bg-dark text-white text-center fw-bold border-secondary" required>
+                     </div>
+
+                     <button type="submit" class="btn btn-danger btn-lg px-4 fw-bold shadow-sm flex-grow-1">🛒 @SharedLocalizer["Sepete Ekle"]</button>
+                    </form>
+                    
+                    <a href="https://api.whatsapp.com/send?phone=905529444569&text=Merhaba SUNMED Medikal, @Uri.EscapeDataString(Model.Name) ürünü için kurumsal/toplu fiyat teklifi almak istiyorum." target="_blank" class="btn btn-outline-warning w-100 fw-bold shadow-sm">
+                        📄 @SharedLocalizer["Kurumsal Alım İçin Teklif İste"]
+                    </a>
+                </div>
+            }
+
+            <div class="mt-3">
+                <a href="javascript:history.back()" class="text-white-50 text-decoration-none small">← @SharedLocalizer["Önceki Sayfaya Dön"]</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            
+            <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="aciklama-tab" data-bs-toggle="tab" data-bs-target="#aciklama" type="button" role="tab" aria-controls="aciklama" aria-selected="true">
+                        Ürün Açıklaması
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="bilgi-tab" data-bs-toggle="tab" data-bs-target="#bilgi" type="button" role="tab" aria-controls="bilgi" aria-selected="false">
+                        Ürün Bilgisi
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="detay-tab" data-bs-toggle="tab" data-bs-target="#detay" type="button" role="tab" aria-controls="detay" aria-selected="false">
+                        Ürün Detayı
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">
+                        Yorumlar (0)
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content shadow-lg" id="productTabsContent">
+                
+                <div class="tab-pane fade show active text-white-50" id="aciklama" role="tabpanel" aria-labelledby="aciklama-tab">
+                    <h5 class="text-white fw-bold mb-4 border-bottom border-secondary pb-2">@Model.Name Hakkında</h5>
+                    <p style="line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap;">@(string.IsNullOrWhiteSpace(Model.Description) ? "Bu ürün için henüz kısa açıklama girilmemiştir." : Model.Description)</p>
+                </div>
+
+                <div class="tab-pane fade text-white-50" id="bilgi" role="tabpanel" aria-labelledby="bilgi-tab">
+                    <h5 class="text-white fw-bold mb-4 border-bottom border-secondary pb-2">Temel Ürün Bilgileri</h5>
+                    <div class="p-4 bg-dark rounded border border-secondary" style="font-size: 1.05rem; overflow-x: auto;">
+                        @if(string.IsNullOrWhiteSpace(Model.ProductInfo)) {
+                            <text>Bu alan henüz doldurulmamış.</text>
+                        } else {
+                            @Html.Raw(Model.ProductInfo)
+                        }
+                    </div>
+                </div>
+
+                <div class="tab-pane fade text-white-50" id="detay" role="tabpanel" aria-labelledby="detay-tab">
+                    <h5 class="text-white fw-bold mb-4 border-bottom border-secondary pb-2">Teknik Özellikler ve Detaylar</h5>
+                    <div class="p-4 bg-dark rounded border border-secondary" style="font-size: 1.05rem; overflow-x: auto;">
+                        @if(string.IsNullOrWhiteSpace(Model.ProductDetail)) {
+                            <text>Bu alan henüz doldurulmamış.</text>
+                        } else {
+                            @Html.Raw(Model.ProductDetail)
+                        }
+                    </div>
+                </div>
+
+                <div class="tab-pane fade text-white-50" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+                    <div class="d-flex align-items-center mb-4">
+                        <h5 class="text-white fw-bold mb-0 me-3">Müşteri Değerlendirmeleri</h5>
+                        <div class="text-warning">⭐⭐⭐⭐⭐ (0 Değerlendirme)</div>
+                    </div>
+                    
+                    <div class="text-center py-5 border border-secondary rounded" style="background-color: #1a1a1a;">
+                        <span style="font-size: 3rem;">💬</span>
+                        <h6 class="text-white mt-3">Bu ürün için henüz yorum yapılmamış.</h6>
+                        <p class="small">İlk yorumu siz yaparak diğer kullanıcılara deneyiminizi aktarabilirsiniz.</p>
+                        <button class="btn btn-outline-danger mt-2" onclick="alert('Yorum yapabilmek için sisteme giriş yapmalısınız veya bu ürünü satın almış olmalısınız.');">Değerlendir</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+    <script>
+        function changeMainImage(newSrc) {
+            document.getElementById('mainImage').src = newSrc;
+            document.getElementById('fancyboxMain').href = newSrc;
+            
+            let thumbnails = document.querySelectorAll('.d-flex.gap-2 img');
+            thumbnails.forEach(img => { img.style.border = "1px solid #555"; });
+            event.target.style.border = "2px solid #dc3545";
+        }
+        
+        $(document).ready(function() {
+            $('[data-fancybox="gallery"]').fancybox({
+                buttons: [ "zoom", "slideShow", "fullScreen", "download", "thumbs", "close" ],
+                loop: true, 
+                transitionEffect: "slide",
+            });
+        });
+    </script>
+}

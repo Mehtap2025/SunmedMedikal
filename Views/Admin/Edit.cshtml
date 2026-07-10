@@ -1,0 +1,238 @@
+@model SunmedMedikal.Models.Product
+@{
+    ViewData["Title"] = "Ürünü Düzenle";
+}
+
+<div class="container mt-5 mb-5" style="max-width: 900px;">
+    <div class="card border-dark shadow-sm">
+        <div class="card-header bg-dark text-white p-3">
+            <h4 class="mb-0 fw-bold">Ürünü Düzenle: @Model.Name</h4>
+        </div>
+        
+        <div class="card-body p-4 bg-light">
+            
+            <div class="mb-4 p-3 border border-secondary rounded" style="background-color: #f8f9fa;">
+                <label class="form-label fw-bold text-dark border-bottom border-dark pb-2 d-block mb-3">📸 Mevcut Görselleri Yönet</label>
+                <div class="d-flex flex-wrap gap-3">
+                    
+                    @if(!string.IsNullOrEmpty(Model.ImageUrl) && !Model.ImageUrl.Contains("placeholder"))
+                    {
+                        <div class="position-relative text-center bg-white p-2 rounded border border-secondary shadow-sm">
+                            <span class="badge bg-success position-absolute top-0 start-0 m-1 z-1">Ana Vitrin</span>
+                            <img src="@Model.ImageUrl" style="width: 100px; height: 100px; object-fit: contain; border-radius: 5px;">
+                            <form asp-action="DeleteProductImage" method="post" class="mt-2">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <input type="hidden" name="imageUrl" value="@Model.ImageUrl" />
+                                <button type="submit" class="btn btn-sm btn-danger w-100 fw-bold" onclick="return confirm('Silmek istediğinize emin misiniz?');">🗑️ Sil</button>
+                            </form>
+                        </div>
+                    }
+
+                    @if(!string.IsNullOrEmpty(Model.AdditionalImageUrls))
+                    {
+                        foreach(var img in Model.AdditionalImageUrls.Split(','))
+                        {
+                            if(!string.IsNullOrWhiteSpace(img))
+                            {
+                                <div class="position-relative text-center bg-white p-2 rounded border border-secondary shadow-sm">
+                                    <img src="@img" style="width: 100px; height: 100px; object-fit: contain; border-radius: 5px;">
+                                    <form asp-action="DeleteProductImage" method="post" class="mt-2">
+                                        <input type="hidden" name="id" value="@Model.Id" />
+                                        <input type="hidden" name="imageUrl" value="@img" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100 fw-bold" onclick="return confirm('Bu ek resmi silmek istediğinize emin misiniz?');">🗑️ Sil</button>
+                                    </form>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+                @if(string.IsNullOrEmpty(Model.ImageUrl) || Model.ImageUrl.Contains("placeholder")) { <p class="text-muted small mb-0">Bu ürüne henüz görsel yüklenmemiş.</p> }
+            </div>
+            
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ImageUrl" />
+                <input type="hidden" asp-for="AdditionalImageUrls" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ProductCode" class="form-label fw-bold text-dark">Ürün Kodu *</label>
+                        <input asp-for="ProductCode" class="form-control border-secondary" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Brand" class="form-label fw-bold text-dark">Marka</label>
+                        <input asp-for="Brand" class="form-control border-secondary" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold text-dark">Ürün Adı *</label>
+                    <input asp-for="Name" class="form-control border-secondary" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold text-dark">Kısa Ürün Açıklaması</label>
+                    <textarea asp-for="Description" class="form-control border-secondary" rows="2"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ProductInfo" class="form-label fw-bold text-dark">Ürün Bilgisi</label>
+                    <textarea asp-for="ProductInfo" class="form-control border-secondary" rows="4"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ProductDetail" class="form-label fw-bold text-dark">Ürün Detayı</label>
+                    <textarea asp-for="ProductDetail" class="form-control border-secondary" rows="4"></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Tags" class="form-label fw-bold text-danger">Gizli Arama Etiketleri</label>
+                    <input asp-for="Tags" class="form-control border-danger" />
+                </div>
+
+                <h5 class="text-dark border-bottom border-dark pb-2 mb-3 mt-4">⚙️ Ürün Kategori Ayarları</h5>
+
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <label asp-for="Category" class="form-label fw-bold text-dark text-truncate d-block">1. Ana Kategori</label>
+                        <select asp-for="Category" id="MainCategorySelect" class="form-select border-secondary" required>
+                            <option value="">-- Seç --</option>
+                            @if(ViewBag.MainCategories != null) {
+                                foreach(var main in ViewBag.MainCategories) { <option value="@main.Name">@main.Name</option> }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <label asp-for="SubCategory" class="form-label fw-bold text-dark text-truncate d-block">2. Alt Kategori</label>
+                        <select asp-for="SubCategory" id="SubCategorySelect" class="form-select border-secondary">
+                            <option value="">-- Seç --</option>
+                            @if(ViewBag.SubCategories != null) {
+                                foreach(var sub in ViewBag.SubCategories) { <option value="@sub.Name" data-main="@sub.MainCategory">@sub.Name</option> }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <label asp-for="SubSubCategory" class="form-label fw-bold text-dark text-truncate d-block">3. Alt Kategori</label>
+                        <select asp-for="SubSubCategory" id="SubSubCategorySelect" class="form-select border-secondary">
+                            <option value="">-- Seç --</option>
+                            @if(ViewBag.SubSubCategories != null) {
+                            foreach(var ss in ViewBag.SubSubCategories) { <option value="@ss.Name" data-sub="@ss.SubCategory">@ss.Name</option> }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="SubSubSubCategory" class="form-label fw-bold text-dark text-truncate d-block">4. Alt Kategori</label>
+                        <select asp-for="SubSubSubCategory" id="SubSubSubCategorySelect" class="form-select border-secondary">
+                            <option value="">-- Seç --</option>
+                            @if(ViewBag.SubSubSubCategories != null) {
+                            foreach(var sss in ViewBag.SubSubSubCategories) { <option value="@sss.Name" data-subsub="@sss.SubSubCategory">@sss.Name</option> }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="SubSubSubSubCategory" class="form-label fw-bold text-danger text-truncate d-block">5. Alt Kategori</label>
+                        <select asp-for="SubSubSubSubCategory" id="SubSubSubSubCategorySelect" class="form-select border-danger">
+                            <option value="">-- Seç --</option>
+                            @if(ViewBag.SubSubSubSubCategories != null) {
+                            foreach(var ssss in ViewBag.SubSubSubSubCategories) { <option value="@ssss.Name" data-subsubsub="@ssss.SubSubSubCategory">@ssss.Name</option> }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="Price" class="form-label fw-bold text-dark">Fiyat ve Para Birimi</label>
+                        <div class="input-group">
+                            <input asp-for="Price" type="number" step="0.01" class="form-control border-secondary" required />
+                            <select asp-for="Currency" class="form-select border-secondary bg-dark text-white fw-bold" style="max-width: 100px;">
+                                <option value="TL">₺ (TL)</option> <option value="USD">$ (USD)</option> <option value="EUR">€ (EUR)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="StockQuantity" class="form-label fw-bold text-dark">Stok Miktarı</label>
+                        <input asp-for="StockQuantity" type="number" class="form-control border-secondary" required />
+                    </div>
+
+                    <div class="col-md-12 mb-4 border-top border-secondary pt-3">
+                     <label asp-for="ImageFiles" class="form-label fw-bold text-dark">YENİ Görseller Ekle <small class="text-danger">(Çoklu Seçim)</small></label>
+                     <input asp-for="ImageFiles" type="file" class="form-control border-secondary" accept="image/*" multiple />
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/Admin/Index" class="btn btn-outline-dark fw-bold px-4">İptal Et</a>
+                    <button type="submit" class="btn btn-danger fw-bold px-4">Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#ProductInfo, #ProductDetail').summernote({
+                height: 250,
+                toolbar: [
+                    ['style', ['style']], ['font', ['bold', 'italic', 'underline', 'clear', 'fontsize']],
+                    ['color', ['color']], ['para', ['ul', 'ol', 'paragraph']], ['table', ['table']], 
+                    ['insert', ['link']], ['view', ['fullscreen', 'codeview']]
+                ],
+                fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '24', '36', '48' , '64', '82', '150'] 
+            });
+
+            // 5 KADEMELİ JİLET GİBİ BİRBİRİNE BAĞLI AÇILIR KUTU SİSTEMİ (GÜNCELLENDİ)
+            $('#MainCategorySelect').change(function() {
+                var main = $(this).val();
+                $('#SubCategorySelect option').each(function() {
+                    if ($(this).val() === "" || $(this).data('main') === main) { $(this).show(); } else { $(this).hide(); }
+                });
+            });
+
+            $('#SubCategorySelect').change(function() {
+                var sub = $(this).val();
+                $('#SubSubCategorySelect option').each(function() {
+                    if ($(this).val() === "" || $(this).data('sub') === sub) { $(this).show(); } else { $(this).hide(); }
+                });
+            });
+
+            $('#SubSubCategorySelect').change(function() {
+                var subsub = $(this).val();
+                $('#SubSubSubCategorySelect option').each(function() {
+                    if ($(this).val() === "" || $(this).data('subsub') === subsub) { $(this).show(); } else { $(this).hide(); }
+                });
+            });
+
+            $('#SubSubSubCategorySelect').change(function() {
+                var subsubsub = $(this).val();
+                $('#SubSubSubSubCategorySelect option').each(function() {
+                    if ($(this).val() === "" || $(this).data('subsubsub') === subsubsub) { $(this).show(); } else { $(this).hide(); }
+                });
+            });
+
+            // SAYFA YÜKLENDİĞİNDE VERİLERİN SİLİNMEMESİ İÇİN ZIRHLI KOD
+            var initialSub = '@Html.Raw(Model.SubCategory)';
+            var initialSubSub = '@Html.Raw(Model.SubSubCategory)';
+            var initialSubSubSub = '@Html.Raw(Model.SubSubSubCategory)';
+            var initialSubSubSubSub = '@Html.Raw(Model.SubSubSubSubCategory)';
+
+            $('#MainCategorySelect').trigger('change');
+            if(initialSub) { $('#SubCategorySelect').val(initialSub).trigger('change'); }
+            if(initialSubSub) { $('#SubSubCategorySelect').val(initialSubSub).trigger('change'); }
+            if(initialSubSubSub) { $('#SubSubSubCategorySelect').val(initialSubSubSub).trigger('change'); }
+            if(initialSubSubSubSub) { $('#SubSubSubSubCategorySelect').val(initialSubSubSubSub); }
+        });
+    </script>
+}

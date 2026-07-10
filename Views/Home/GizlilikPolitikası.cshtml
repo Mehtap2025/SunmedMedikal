@@ -1,0 +1,118 @@
+@{
+    ViewData["Title"] = "Gizlilik ve Güvenlik Politikası";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    
+    .policy-card {
+        background-color: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-left: 4px solid #dc3545;
+        border-radius: 8px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .policy-card:hover {
+        box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        background-color: #0f0f0f;
+        transform: translateY(-5px);
+    }
+    
+    .policy-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .policy-title {
+        color: #fff;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        font-size: 1.15rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .policy-text {
+        color: #aaa;
+        line-height: 1.8;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+</style>
+
+<div class="container mt-5 mb-5 pb-5" style="min-height: 70vh;">
+    
+    <!-- Sayfa Başlığı -->
+    <div class="row text-center mb-5 border-bottom border-secondary pb-4">
+        <div class="col-12">
+            <div class="display-4 mb-3">🔒</div>
+            <h1 class="text-white fw-bold text-uppercase" style="letter-spacing: 2px;">
+                Gizlilik ve <span class="text-danger">Güvenlik Politikası</span>
+            </h1>
+            <p class="text-white-50 mt-3 fs-5">
+                <strong>sunmedikal.com</strong> olarak kişisel verilerinize ve bilgi güvenliğinize en yüksek değeri veriyoruz.
+            </p>
+        </div>
+    </div>
+
+    <!-- Sözleşme Kartları -->
+    <div class="row g-4">
+        
+        <!-- Kart 1: Veri Koruma -->
+        <div class="col-md-6">
+            <div class="policy-card h-100">
+                <div class="policy-icon">🛡️</div>
+                <div class="policy-title">Kişisel Bilgilerin Korunması</div>
+                <p class="policy-text">
+                    <strong>sunmedikal.com</strong> üye ve müşterilerinin e-posta adreslerini ve diğer kişisel bilgileri hiçbir isim altında, hiçbir nedenle ve hiçbir muhatap nezdinde açıklamaz, satmaz, paylaşmaz ve kötüye kullanmaz.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Kart 2: Kredi Kartı Güvenliği -->
+        <div class="col-md-6">
+            <div class="policy-card h-100">
+                <div class="policy-icon">💳</div>
+                <div class="policy-title">Ödeme ve Kredi Kartı Güvenliği</div>
+                <p class="policy-text">
+                    <strong>sunmedikal.com</strong>, güvenliğiniz için kredi kartı bilgilerinizi hiçbir şekilde saklamaz ve dolayısıyla bu tür bilgileri üyelik bilgileri çerçevesinde sormaz, istemez. Alışveriş esnasında <strong>sunmedikal.com</strong> çalışanları dahil hiç kimse Kredi Kartı bilgilerinizi göremez. Kredi Kartı bilgileriniz ilgili bankalara en yüksek güvenlik standartları çerçevesinde ikili bağlantılarla iletilir.
+                </p>
+            </div>
+        </div>
+
+        <!-- Kart 3: Çerezler -->
+        <div class="col-md-6">
+            <div class="policy-card h-100">
+                <div class="policy-icon">🍪</div>
+                <div class="policy-title">Çerez (Cookie) ve IP Takibi</div>
+                <p class="policy-text">
+                    Sitemizde alışveriş sepetinizin takibi ve aynı reklamların ard arda görülmesinin engellenmesi için IP adresinizden ve Cookie’lerden yararlanılmaktadır. Cookie’lerden size ilgi alanlarınız doğrultusunda içerik sunulması ve tekrar tekrar şifre girmemeniz için şifrenizin saklanması gibi konularda yararlanılmaktadır.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Kart 4: Geri Bildirimler -->
+        <div class="col-md-6">
+            <div class="policy-card h-100">
+                <div class="policy-icon">📝</div>
+                <div class="policy-title">Kullanıcı Geri Bildirimleri</div>
+                <p class="policy-text">
+                    Üye ve ziyaretçilerin site ile ilgili tarafımıza ulaştırdıkları her türlü istek, öneri ve soruları içeren bilgiler site performansını ölçmek açısından saklanmaktadır. Bu bilgiler kişilerin kendilerine yanıt vermek dışında herhangi bir amaç için kullanılamaz.
+                </p>
+            </div>
+        </div>
+
+        <!-- Kart 5: Telif Hakları (Özel Renk) -->
+        <div class="col-12">
+            <div class="policy-card" style="border-left-color: #ffc107;">
+                <div class="policy-icon">©️</div>
+                <div class="policy-title" style="color: #ffc107;">Telif Hakları ve Fikri Mülkiyet</div>
+                <p class="policy-text">
+                    <strong>sunmedikal.com</strong> üzerinden yayınlanan hiçbir yazı veya grafik üçüncü kişiler tarafından izinsiz kullanılamaz. Bu sitede yer alan içerik materyali ya da fonksiyonalite, başka mecralarda yayınlanamaz, <strong>sunmedikal.com</strong> izni olmadan internet sitelerine link verilemez.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>

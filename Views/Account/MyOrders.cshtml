@@ -1,0 +1,95 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SunmedMedikal.Models.SharedResource> SharedLocalizer
+@model List<SunmedMedikal.Models.Order>
+@{
+    ViewData["Title"] = SharedLocalizer["Siparişlerim"];
+}
+
+<div class="container mt-5 mb-5" style="min-height: 70vh;">
+    <h2 class="text-white fw-bold mb-4">📦 @SharedLocalizer["SİPARİŞ"] <span class="text-danger">@SharedLocalizer["TAKİBİ"]</span></h2>
+    
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success fw-bold shadow-sm rounded mb-4">✅ @TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger fw-bold shadow-sm rounded mb-4">❌ @TempData["ErrorMessage"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-dark border-secondary text-white-50 p-5 text-center">
+            @SharedLocalizer["Henüz bir siparişiniz bulunmamaktadır."]
+        </div>
+    }
+    else
+    {
+        @foreach (var order in Model)
+        {
+            <div class="card mb-4 shadow-sm" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; border-left: 5px solid @(order.Status == "Sipariş Tamamlandı" ? "#198754" : order.Status == "İptal Edildi" ? "#6c757d" : "#dc3545");">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <h6 class="text-white-50 small mb-1">@SharedLocalizer["Sipariş No:"] #@order.Id</h6>
+                            <h5 class="text-white fw-bold">@order.OrderDate.ToString("dd MMMM yyyy")</h5>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-white-50 small mb-1">@SharedLocalizer["Toplam Tutar"]</h6>
+                            <h5 class="text-success fw-bold">@order.TotalAmount.ToString("N2") TL</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-white-50 small mb-1">@SharedLocalizer["Güncel Durum"]</h6>
+                            
+                            @if(order.Status == "Sipariş Tamamlandı")
+                            {
+                                <span class="badge bg-success p-2 px-3 fs-6">✅ @SharedLocalizer["Siparişiniz Tamamlandı!"]</span>
+                                <div class="text-success small mt-1 fw-bold">@SharedLocalizer["Bizi tercih ettiğiniz için teşekkür ederiz."]</div>
+                            }
+                            else if(order.Status == "Kargolandı")
+                            {
+                                <span class="badge bg-primary p-2 px-3 fs-6">🚚 @SharedLocalizer["Kargoya Verildi"]</span>
+                            }
+                            else if (order.Status == "Ödeme Bekleniyor (Havale)")
+                            {
+                                <span class="badge bg-warning text-dark p-2 px-3 fs-6">⏳ @SharedLocalizer["Ödeme Bekleniyor (Havale)"]</span>
+                            }
+                            else if (order.Status == "İptal Edildi")
+                            {
+                                <span class="badge bg-secondary text-white p-2 px-3 fs-6">❌ @SharedLocalizer["İptal Edildi"]</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info text-dark p-2 px-3 fs-6">⏳ @order.Status</span>
+                            }
+                        </div>
+
+                        <div class="mt-3 p-3 rounded" style="background-color: #1a1a1a; border: 1px dashed #333;">
+                            <h6 class="text-danger fw-bold small mb-2 text-uppercase">@SharedLocalizer["Sipariş Özeti:"]</h6>
+                            <div class="text-white small" style="white-space: pre-line; line-height: 1.6;">
+                                @order.OrderNotes
+                            </div>
+                        </div>
+
+                        <div class="col-md-2 mt-3 text-md-end">
+                             <a href="/Home/Contact" class="btn btn-outline-light btn-sm mt-2 w-100" style="border-radius: 20px;">@SharedLocalizer["Destek İste"]</a>
+                        </div>
+                        <div class="col-md-2 mt-3 text-md-end">
+                            <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-outline-danger btn-sm w-100 mb-2">@SharedLocalizer["Detay Gör"]</a>
+                            <a asp-action="Invoice" asp-route-id="@order.Id" target="_blank" class="btn btn-outline-light btn-sm w-100 mb-2">@SharedLocalizer["Fatura"]</a>
+                            
+                            @* Mevcut Şart: Sadece bekleyen siparişlerde görünür *@
+                            @if (order.Status == "Onay Bekliyor" || order.Status == "Ödeme Bekleniyor (Havale)" || order.Status == "Kargolandı") 
+                            {
+                                <form asp-controller="Account" asp-action="CancelOrder" method="post">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm w-100 fw-bold" onclick="return confirm('@SharedLocalizer["Bu siparişi tamamen iptal etmek istediğinize emin misiniz?"]');">❌ @SharedLocalizer["İptal Et"]</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

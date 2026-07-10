@@ -1,0 +1,202 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SunmedMedikal.Models.SharedResource> SharedLocalizer
+@model IEnumerable<SunmedMedikal.Models.Product>
+@{
+    ViewData["Title"] = ViewBag.CategoryName;
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    .product-card {
+        background-color: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-radius: 12px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+    }
+    
+    /* TRENDYOL TİPİ HOVER SLIDER ALANI */
+    .product-image-container {
+        height: 220px;
+        background-color: #ffffff;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    .product-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        position: absolute;
+        top: 0; left: 0;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+    }
+    .product-image-container img.active {
+        opacity: 1;
+        z-index: 10;
+    }
+    
+    /* Alt kısımdaki Trendyol tipi nokta (dot) belirteçleri */
+    .slider-dots {
+        position: absolute;
+        bottom: 10px;
+        left: 0; right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        z-index: 20;
+    }
+    .slider-dot {
+        width: 6px; height: 6px;
+        background-color: rgba(0,0,0,0.3);
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+    .slider-dot.active {
+        background-color: #dc3545;
+        transform: scale(1.3);
+    }
+    .hover-areas {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        display: flex;
+        z-index: 30;
+    }
+    .hover-area {
+        flex-grow: 1;
+        height: 100%;
+    }
+</style>
+
+<div class="container mt-5 mb-5" style="min-height: 70vh;">
+    
+    <div class="row mb-5 align-items-center border-bottom border-secondary pb-3">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-uppercase text-white mb-0" style="letter-spacing: 1px;">
+                <span class="text-danger">|</span> @ViewBag.CategoryName
+            </h2>
+            <p class="text-white-50 mt-2 mb-0">@SharedLocalizer["Laboratuvarınız için en güvenilir ürünleri keşfedin."]</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <span class="badge bg-dark border border-secondary p-2 fs-6 text-white-50">@SharedLocalizer["Toplam"] @Model.Count() @SharedLocalizer["Ürün"]</span>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <h4 class="text-white-50">@SharedLocalizer["Aradığınız kriterlere uygun ürün bulunamadı."]</h4>
+            <a href="/Home/Index" class="btn btn-outline-danger mt-3 px-4 rounded-pill">Vitrine Dön</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var urun in Model)
+            {
+                // Resimleri diziye çevirip hazırlıyoruz
+                var images = new List<string> { urun.ImageUrl };
+                if(!string.IsNullOrEmpty(urun.AdditionalImageUrls)) {
+                    images.AddRange(urun.AdditionalImageUrls.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)));
+                }
+
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card product-card h-100" style="border-top: 3px solid @(urun.IsQuoteOnly ? "#ffc107" : "#dc3545");">
+                        
+                        <div class="product-image-container" onclick="window.location.href='/Product/Details/@urun.Id'">
+                            @for(int i = 0; i < images.Count; i++)
+                            {
+                                <img src="@images[i]" class="@(i == 0 ? "active" : "")" data-index="@i">
+                            }
+                            
+                            <div class="hover-areas">
+                                @for(int i = 0; i < images.Count; i++)
+                                {
+                                    <div class="hover-area" onmouseover="changeHoverImage(this, @i)"></div>
+                                }
+                            </div>
+
+                            @if(images.Count > 1)
+                            {
+                                <div class="slider-dots">
+                                    @for(int i = 0; i < images.Count; i++)
+                                    {
+                                        <div class="slider-dot @(i == 0 ? "active" : "")" data-dot-index="@i"></div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="card-body d-flex flex-column p-4">
+                            <span class="badge @(urun.IsQuoteOnly ? "bg-warning text-dark" : "bg-danger") mb-3 align-self-start" style="font-size: 0.75rem;">
+                                @(urun.IsQuoteOnly ? SharedLocalizer["Projeli Ürün"].Value : SharedLocalizer["Hızlı Teslimat"].Value)
+                            </span>
+                            
+                            <h6 class="card-title fw-bold text-white mb-3" style="line-height: 1.4;">@urun.Name</h6>
+                            
+                            <div class="mt-auto">
+                                @if (!urun.IsQuoteOnly)
+                                {
+                                    <h5 class="text-success fw-bold mb-3">@urun.Price.ToString("N2") @urun.Currency</h5>
+                                }
+                                else
+                                {
+                                    <h6 class="text-warning fw-bold mb-3">@SharedLocalizer["Fiyat Sorunuz"]</h6>
+                                }
+
+                                <div class="d-grid gap-2">
+                                    <a href="/Product/Details/@urun.Id" class="btn btn-outline-light btn-sm" style="border-radius: 20px;">@SharedLocalizer["İncele"]</a>
+                                    
+                                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                        <input type="hidden" name="productId" value="@urun.Id" />
+                                        <input type="hidden" name="quantity" value="1" />
+                                        <button type="submit" class="btn @(urun.IsQuoteOnly ? "btn-warning text-dark" : "btn-danger") btn-sm w-100 fw-bold" style="border-radius: 20px;">
+                                            @(urun.IsQuoteOnly ? "📄 " + SharedLocalizer["Teklif İste"].Value : "🛒 " + SharedLocalizer["Sepete Ekle"].Value)
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function changeHoverImage(element, index) {
+            let container = element.closest('.product-image-container');
+            
+            // Tüm resimleri gizle, sadece index'e ait olanı göster
+            let images = container.querySelectorAll('img');
+            images.forEach(img => img.classList.remove('active'));
+            if(images[index]) images[index].classList.add('active');
+
+            // Noktaları (Dots) güncelle
+            let dots = container.querySelectorAll('.slider-dot');
+            dots.forEach(dot => dot.classList.remove('active'));
+            if(dots[index]) dots[index].classList.add('active');
+        }
+
+        // Fare karttan çıkınca ana (ilk) resme geri dönsün
+        document.querySelectorAll('.product-image-container').forEach(container => {
+            container.addEventListener('mouseleave', function() {
+                let images = this.querySelectorAll('img');
+                let dots = this.querySelectorAll('.slider-dot');
+                
+                images.forEach(img => img.classList.remove('active'));
+                dots.forEach(dot => dot.classList.remove('active'));
+                
+                if(images[0]) images[0].classList.add('active');
+                if(dots[0]) dots[0].classList.add('active');
+            });
+        });
+    </script>
+}

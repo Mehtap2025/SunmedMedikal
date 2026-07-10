@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Kargo Takip";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card bg-dark text-white border-secondary shadow-lg">
+                <div class="card-header border-bottom border-danger py-3">
+                    <h2 class="h4 mb-0 fw-bold text-uppercase">📦 Kargo Takip</h2>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    
+                    <p class="text-white-50 mb-5" style="font-size: 1.05rem;">
+                        Siparişinize ait kargo takip numarası, paketiniz anlaşmalı lojistik firmamıza (Yurtiçi Kargo / UPS) teslim edildikten sonra kayıtlı e-posta adresinize ve cep telefonunuza SMS olarak iletilmektedir.
+                    </p>
+
+                    <div class="p-4 border border-secondary rounded" style="background-color: #111;">
+                        <h5 class="text-white mb-3">Gönderi Durumunu Sorgula</h5>
+                        <form class="row g-3 align-items-center" onsubmit="event.preventDefault(); alert('Kargo entegrasyonu ürün yüklemelerinden sonra aktif edilecektir.');">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control bg-dark text-white border-secondary" placeholder="Örn: 1Z9999999999999999 veya Sipariş Numaranız" required>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-danger w-100 fw-bold">Sorgula</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="mt-5">
+                        <h6 class="text-danger fw-bold">Teslimat Standartlarımız:</h6>
+                        <ul class="text-white-50 small mt-2">
+                            <li>Kimyasal maddeler, ADR kurallarına ve tehlikeli madde taşımacılığı standartlarına uygun olarak özel ambalajlarda gönderilir.</li>
+                            <li>Cam ve hassas laboratuvar cihazları, darbe emici özel korumalı paketlerle sigortalı olarak sevk edilir.</li>
+                            <li>Soğuk zincir ürünleri, sıcaklık takip probları ile birlikte özel strafor kutularda sevk edilmektedir.</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

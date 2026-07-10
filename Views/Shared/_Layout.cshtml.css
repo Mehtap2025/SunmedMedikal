@@ -1,0 +1,67 @@
+﻿/* SİTENİN GENEL YAPISI VE SOL MENÜ (SIDEBAR) AYARLARI */
+
+body {
+    background-color: #f4f6f9; /* Sağ taraftaki ana içerik arka planı (açık gri) */
+    overflow-x: hidden;
+}
+
+/* Sol Menü - Tamamen Siyah ve Sabit */
+.sidebar-custom {
+    width: 280px;
+    height: 100vh;
+    background-color: #050505;
+    border-right: 3px solid #dc3545; /* Sağ tarafına şık kırmızı çizgi */
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto; /* Çok link olursa aşağı kaydırma sağlar */
+    z-index: 1000;
+}
+
+/* Sağ Taraf - Ana İçerik Alanı (Sol menünün bittiği yerden başlar) */
+.main-content {
+    margin-left: 280px; 
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sol Menü Link Efektleri */
+.sidebar-custom .nav-link {
+    color: #e0e0e0;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+/* Linkin üzerine gelince (Hover) Kırmızı parlama efekti */
+.sidebar-custom .nav-link:hover {
+    background-color: #1a1a1a;
+    color: #dc3545 !important;
+    border-left: 4px solid #dc3545;
+    padding-left: 25px; /* Hafifçe sağa kayma animasyonu */
+}
+
+/* Alt Menülerin (Sub-menu) Siyah Tonu ve Ayarları */
+.sidebar-custom .sub-menu {
+    background-color: #0f0f0f;
+    padding-left: 0;
+    list-style: none;
+    border-left: 2px solid #333;
+    margin-left: 20px;
+}
+
+.sidebar-custom .sub-menu .nav-link {
+    padding: 10px 20px 10px 30px;
+    font-size: 0.9rem;
+    color: #888;
+    border: none;
+}
+
+.sidebar-custom .sub-menu .nav-link:hover {
+    color: #fff !important;
+    background-color: transparent;
+    padding-left: 35px;
+}

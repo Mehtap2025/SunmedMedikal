@@ -1,0 +1,195 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SunmedMedikal.Models.SharedResource> SharedLocalizer
+@model List<SunmedMedikal.Models.CartItem>
+@{
+    ViewData["Title"] = SharedLocalizer["Sepetim"];
+    
+    decimal usdKur = ViewBag.UsdKur ?? 33.50m;
+    decimal eurKur = ViewBag.EurKur ?? 36.50m;
+    
+    var buyNowItems = Model != null ? Model.Where(x => !x.IsQuoteOnly).ToList() : new List<SunmedMedikal.Models.CartItem>();
+    var quoteItems = Model != null ? Model.Where(x => x.IsQuoteOnly).ToList() : new List<SunmedMedikal.Models.CartItem>();
+
+    decimal totalAmount = 0;
+    
+    // ---------------------------------------------------------
+    // SİHİRLİ KISIM: NORMAL ÜRÜNLER İÇİN TEKLİF TASLAĞI OLUŞTURMA
+    // ---------------------------------------------------------
+    string normalUrunlerMesaji = "Merhaba SUNMED Medikal, sepetimde bulunan aşağıdaki ürünler için kurumsal/toplu fiyat teklifi almak istiyorum:%0a%0a";
+    
+    foreach(var item in buyNowItems) {
+        decimal p = item.Price;
+        if (item.Currency == "USD") p *= usdKur; else if (item.Currency == "EUR") p *= eurKur;
+        totalAmount += (p * item.Quantity);
+        
+        // Sepetteki normal ürünleri mesaja ekliyoruz
+        normalUrunlerMesaji += $"🔹 {item.Quantity} Adet - {item.Name}%0a";
+    }
+    normalUrunlerMesaji += "%0aİyi çalışmalar dilerim.";
+
+    // ---------------------------------------------------------
+    // ZATEN FİYATI 0 TL OLAN "TEKLİFLİK" ÜRÜNLERİN TASLAĞI
+    // ---------------------------------------------------------
+    string mesajTaslagi = "Merhaba SUNMED Medikal, sistemdeki aşağıdaki tekliflik ürünler için fiyat ve stok durumu rica ediyorum:%0a%0a";
+    foreach(var item in quoteItems) { mesajTaslagi += $"🔹 {item.Quantity} Adet - {item.Name}%0a"; }
+    mesajTaslagi += "%0aİyi çalışmalar dilerim.";
+    
+    string whatsappNo = "905529444569"; 
+    string mailAdresi = "siparis@sunmedikal.com";
+}
+
+<style>
+    .cart-table { border-radius: 12px; overflow: hidden; }
+    .table thead th { background-color: rgba(220,53,69,0.1) !important; color: #dc3545 !important; font-weight: bold !important; border-bottom: 2px solid #dc3545 !important; text-transform: uppercase; padding: 15px; }
+    .table tbody td { vertical-align: middle !important; padding: 15px; font-weight: 500; }
+    
+    .qty-group { display: flex; align-items: center; border-radius: 20px; padding: 2px; width: 120px; border: 1px solid #dc3545; }
+    .btn-qty { background: transparent; border: none; color: #dc3545; font-weight: bold; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; }
+    .btn-qty:hover { background: #dc3545; color: white; border-radius: 50%; }
+    .qty-input { background: transparent; border: none; font-weight: bold; width: 45px; text-align: center; }
+    .qty-input:focus { outline: none; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+</style>
+
+<div class="container mt-5 mb-5" style="min-height: 75vh;">
+    <h2 class="fw-bold text-uppercase theme-text mb-4">@SharedLocalizer["ALIŞVERİŞ"] <span class="text-danger">@SharedLocalizer["SEPETİM"]</span></h2>
+
+    @if (TempData["CartWarning"] != null)
+    {
+        <div class="alert alert-warning fw-bold text-dark shadow-sm rounded mb-4">
+            ⚠️ @TempData["CartWarning"]
+        </div>
+    }
+
+    @if (Model == null || !Model.Any()) {
+        <div class="row g-5">
+            <div class="col-12 text-center py-5 cart-table theme-bg shadow-lg border-secondary mb-5">
+                <h3 class="theme-text">@SharedLocalizer["Sepetiniz boş"]</h3>
+                <a href="/" class="btn btn-danger mt-3 px-5">@SharedLocalizer["Alışverişe Dön"]</a>
+            </div>
+            
+            <div class="col-12 mt-5">
+                <h4 class="text-warning fw-bold mb-3">📄 @SharedLocalizer["KURUMSAL TEKLİF VE DESTEK"]</h4>
+                <div class="cart-table theme-bg shadow-lg p-4 border-warning text-center" style="border-style: dashed;">
+                    <h5 class="text-white-50 mb-4">Sistemde bulunmayan ürünler veya kurumsal alımlarınız için doğrudan fiyat teklifi isteyebilirsiniz.</h5>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="https://api.whatsapp.com/send?phone=@whatsappNo&text=Merhaba SUNMED Medikal, kurumsal fiyat teklifi almak istiyorum." target="_blank" class="btn btn-success btn-lg fw-bold px-5 shadow" style="border-radius: 30px;">
+                            <i class="fab fa-whatsapp"></i> @SharedLocalizer["WhatsApp Teklif"]
+                        </a>
+                        <a href="mailto:@mailAdresi?subject=Kurumsal Fiyat Teklifi Talebi" class="btn btn-warning text-dark btn-lg fw-bold px-5 shadow" style="border-radius: 30px;">
+                            <i class="fas fa-envelope"></i> @SharedLocalizer["E-Posta Teklif"]
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    } else {
+        <div class="row g-5">
+            
+            @if (buyNowItems.Any()) {
+                <div class="col-12">
+                    <h4 class="text-success fw-bold mb-3">🟢 @SharedLocalizer["HIZLI SATIN ALINACAK ÜRÜNLER"]</h4>
+                    <div class="cart-table theme-bg shadow-lg p-3 border-secondary mb-4">
+                        <table class="table theme-text mb-0">
+                            <thead><tr><th>@SharedLocalizer["ÜRÜN"]</th><th>@SharedLocalizer["BİRİM FİYAT"]</th><th class="text-center">@SharedLocalizer["ADET"]</th><th>@SharedLocalizer["TOPLAM"] (TL)</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var item in buyNowItems) {
+                                    <tr class="theme-text">
+                                        <td class="theme-text"><img src="@item.ImageUrl" style="width: 50px; background: #fff; padding: 3px;" class="me-2 rounded"> @item.Name</td>
+                                        <td class="theme-text">@item.Price.ToString("N2") @item.Currency</td>
+                                        <td class="text-center">
+                                            <div class="qty-group mx-auto theme-bg-alt">
+                                                <button type="button" class="btn-qty" onclick="changeQty(this, -1, @item.ProductId, false)">-</button>
+                                                <input type="number" class="qty-input theme-text" value="@item.Quantity" onchange="updateQtyExact(@item.ProductId, this.value, false)" />
+                                                <button type="button" class="btn-qty" onclick="changeQty(this, 1, @item.ProductId, false)">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="text-success fw-bold">
+                                            @{ decimal p = item.Price; if(item.Currency == "USD") p *= usdKur; else if(item.Currency == "EUR") p *= eurKur; }
+                                            @((p * item.Quantity).ToString("N2")) TL
+                                        </td>
+                                        <td><a href="/Cart/RemoveFromCart?id=@item.ProductId&isQuote=false" class="text-danger">✖</a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-4 border-top border-secondary pt-4">
+                            <h3 class="theme-text fw-bold">@SharedLocalizer["TOPLAM:"] <span class="text-success">@totalAmount.ToString("N2") TL</span></h3>
+                            <button onclick="goToCheckout()" class="btn btn-success btn-lg px-5 fw-bold" style="border-radius: 30px;">💳 @SharedLocalizer["GÜVENLİ ÖDEME YAP"]</button>
+                        </div>
+                    </div>
+
+                    <div class="cart-table shadow-lg p-4 border border-warning rounded mt-2" style="background-color: #1a1a05; border-left: 6px solid #ffc107 !important;">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                            <div class="mb-3 mb-md-0 text-center text-md-start">
+                                <h5 class="text-warning fw-bold mb-2">📄 @SharedLocalizer["Sepetteki Ürünler İçin Teklif İsteyin"]</h5>
+                                <p class="text-white-50 small mb-0">Yukarıdaki sepetinizi toplu alım veya kurumunuza özel fiyatlandırılması için doğrudan bize iletebilirsiniz.</p>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <a href="https://api.whatsapp.com/send?phone=@whatsappNo&text=@normalUrunlerMesaji" target="_blank" class="btn btn-outline-success fw-bold px-4" style="border-radius: 30px;">
+                                    <i class="fab fa-whatsapp"></i> @SharedLocalizer["WhatsApp Teklif"]
+                                </a>
+                                <a href="mailto:@mailAdresi?subject=Sepet Ürünleri - Kurumsal Teklif Talebi&body=@normalUrunlerMesaji" class="btn btn-outline-warning text-warning fw-bold px-4" style="border-radius: 30px;" onmouseover="this.classList.remove('text-warning'); this.classList.add('text-dark');" onmouseout="this.classList.add('text-warning'); this.classList.remove('text-dark');">
+                                    <i class="fas fa-envelope"></i> @SharedLocalizer["E-Posta Teklif"]
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (quoteItems.Any()) {
+                <div class="col-12 mt-5">
+                    <h4 class="text-warning fw-bold mb-3">📄 @SharedLocalizer["KURUMSAL TEKLİF İSTENECEK ÜRÜNLER"]</h4>
+                    <div class="cart-table theme-bg shadow-lg p-3 border-warning" style="border-style: dashed;">
+                        <table class="table theme-text mb-0">
+                            @foreach (var item in quoteItems) {
+                                <tr>
+                                    <td class="theme-text">@item.Name</td>
+                                    <td class="text-center">
+                                         <div class="qty-group mx-auto theme-bg-alt" style="border-color: #ffc107;">
+                                            <button type="button" class="btn-qty text-warning" onclick="changeQty(this, -1, @item.ProductId, true)">-</button>
+                                            <input type="number" class="qty-input theme-text" value="@item.Quantity" onchange="updateQtyExact(@item.ProductId, this.value, true)" />
+                                            <button type="button" class="btn-qty text-warning" onclick="changeQty(this, 1, @item.ProductId, true)">+</button>
+                                        </div>
+                                    </td>
+                                    <td class="text-warning fw-bold">@SharedLocalizer["Fiyat Bekleniyor"]</td>
+                                    <td><a href="/Cart/RemoveFromCart?id=@item.ProductId&isQuote=true" class="text-danger">✖</a></td>
+                                </tr>
+                            }
+                        </table>
+                        
+                        <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top border-secondary">
+                            <a href="https://api.whatsapp.com/send?phone=@whatsappNo&text=@mesajTaslagi" target="_blank" class="btn btn-success fw-bold px-4" style="border-radius: 30px;">
+                                <i class="fab fa-whatsapp"></i> @SharedLocalizer["WhatsApp Teklif"]
+                            </a>
+                            <a href="mailto:@mailAdresi?subject=Kurumsal Fiyat Teklifi Talebi&body=@mesajTaslagi" class="btn btn-warning text-dark fw-bold px-4" style="border-radius: 30px;">
+                                <i class="fas fa-envelope"></i> @SharedLocalizer["E-Posta Teklif"]
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function updateQtyExact(productId, newQty, isQuote) {
+            $.post('/Cart/UpdateQuantity', { productId: productId, newQuantity: newQty, isQuote: isQuote }, function (r) {
+                if (r.success) { location.reload(); } 
+                else { alert(r.message); location.reload(); }
+            });
+        }
+        function changeQty(btn, delta, productId, isQuote) {
+            let input = $(btn).siblings('.qty-input');
+            let newQty = parseInt(input.val()) + delta;
+            if(newQty < 1) newQty = 1;
+            input.val(newQty);
+            updateQtyExact(productId, newQty, isQuote);
+        }
+        function goToCheckout() { window.location.href = '/Cart/Checkout'; }
+    </script>
+}

@@ -1,0 +1,155 @@
+@{
+    ViewData["Title"] = "İletişim";
+}
+
+<style>
+    body { background-color: #050505 !important; }
+    
+    .contact-info-card {
+        background-color: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-radius: 12px;
+        padding: 30px;
+        height: 100%;
+    }
+    .contact-form-card {
+        background-color: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        border-top: 4px solid #dc3545;
+        border-radius: 12px;
+        padding: 40px;
+    }
+    
+    .form-control-custom {
+        background-color: #121212 !important;
+        border: 1px solid #333 !important;
+        color: #fff !important;
+    }
+    .form-control-custom:focus {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    .icon-circle {
+        width: 45px;
+        height: 45px;
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin-right: 15px;
+    }
+</style>
+
+<div class="container-fluid py-5" style="background-color: #080808; border-bottom: 2px solid #1a1a1a;">
+    <div class="container py-4 text-center">
+        <h1 class="display-4 fw-bold text-uppercase" style="color: #ffffff; letter-spacing: 2px;">
+            BİZİMLE <span class="text-danger">İLETİŞİME GEÇİN</span>
+        </h1>
+        <div style="width: 80px; height: 4px; background-color: #dc3545; margin: 20px auto;"></div>
+        <p class="fs-5 mt-4 text-white-50 mx-auto" style="max-width: 600px;">
+            Siparişleriniz, teknik destek veya kurumsal teklif talepleriniz için uzman ekibimize dilediğiniz zaman ulaşabilirsiniz.
+        </p>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5 pb-5">
+    <div class="row g-5">
+        
+        <div class="col-lg-5">
+            <div class="contact-info-card shadow-lg">
+                <h3 class="text-white fw-bold mb-4">İletişim Bilgileri</h3>
+                <p class="text-white-50 mb-5">Sorularınız veya işbirlikleri için aşağıdaki kanallardan SUNMED Medikal yetkililerine hızlıca ulaşabilirsiniz.</p>
+
+                <div class="d-flex mb-4 align-items-center">
+                    <div class="icon-circle">📍</div>
+                    <div>
+                        <h6 class="text-white fw-bold mb-1">Merkez Ofis</h6>
+                        <span class="text-white-50 small">Oruçreis mh. Giyimkent 18. sk. B192 Blk. No:103A ESENLER/İSTANBUL, Türkiye</span>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-circle">✉️</div>
+                        <div>
+                            <h6 class="text-white fw-bold mb-1">E-Posta Adresi</h6>
+                            <span class="text-white-50 small">info@sunmedikal.com</span><br>
+                            <span class="text-white-50 small">siparis@sunmedikal.com</span>
+                        </div>
+                    </div>
+                    <a href="mailto:info@sunmedikal.com" class="btn btn-outline-danger btn-sm ms-5 px-3" style="border-radius: 20px;">
+                        📧 Doğrudan Mail Gönder
+                    </a>
+                </div>
+
+                <div class="d-flex mb-4 align-items-center">
+                    <div class="icon-circle">📞</div>
+                    <div>
+                        <h6 class="text-white fw-bold mb-1">Telefon / Destek</h6>
+                        <span class="text-white-50 small">+90 (552) 944 45 69 </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="contact-form-card shadow-lg">
+                <h3 class="text-white fw-bold mb-4">Mesaj Gönderin</h3>
+                
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success fw-bold text-center mb-4">
+                        ✅ @TempData["SuccessMessage"]
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger fw-bold text-center mb-4">
+                        ❌ @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <form asp-controller="Home" asp-action="Contact" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label text-secondary fw-bold small">Adınız Soyadınız</label>
+                            <input type="text" name="name" class="form-control form-control-custom" placeholder="Örn: Ali ATA" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label text-secondary fw-bold small">Firma Adı (Opsiyonel)</label>
+                            <input type="text" name="company" class="form-control form-control-custom" placeholder="Örn: SUNMED Medikal">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label text-secondary fw-bold small">E-Posta Adresiniz</label>
+                            <input type="email" name="email" class="form-control form-control-custom" placeholder="name@example.com" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label text-secondary fw-bold small">Konu</label>
+                            <select name="subject" class="form-control form-control-custom">
+                                <option value="Kurumsal Teklif Talebi">Kurumsal Teklif Talebi</option>
+                                <option value="Sipariş Durumu">Sipariş Durumu</option>
+                                <option value="Teknik Destek">Teknik Destek</option>
+                                <option value="Tedarikçi İşbirliği">Tedarikçi İşbirliği</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary fw-bold small">Mesajınız</label>
+                        <textarea name="message" class="form-control form-control-custom" rows="5" placeholder="Lütfen talebinizi detaylıca yazın..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm" style="border-radius: 30px;">Mesajı Gönder</button>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>

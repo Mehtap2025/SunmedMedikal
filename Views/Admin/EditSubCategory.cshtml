@@ -1,0 +1,40 @@
+@model SunmedMedikal.Models.SubCategory
+@{
+    ViewData["Title"] = "Alt Kategori Düzenle";
+}
+
+<div class="container mt-5 mb-5" style="max-width: 600px;">
+    <div class="card border-danger shadow-sm">
+        <div class="card-header bg-danger text-white p-3">
+            <h5 class="mb-0 fw-bold">✏️ Alt Kategori Düzenle: @Model.Name</h5>
+        </div>
+        <div class="card-body p-4 bg-light">
+            <form asp-action="EditSubCategory" method="post">
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="mb-4">
+                    <label asp-for="MainCategory" class="form-label fw-bold text-dark">Bağlı Olduğu Ana Kategori</label>
+                    <select asp-for="MainCategory" class="form-select border-secondary form-select-lg" required>
+                        @if(ViewBag.MainCategories != null)
+                        {
+                            foreach(var main in ViewBag.MainCategories)
+                            {
+                                <option value="@main.Name" selected="@(main.Name == Model.MainCategory)">@main.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Name" class="form-label fw-bold text-dark">Alt Kategori Adı</label>
+                    <input asp-for="Name" class="form-control border-secondary form-control-lg" required />
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="/Admin/SubCategories" class="btn btn-outline-dark fw-bold px-4">İptal</a>
+                    <button type="submit" class="btn btn-success fw-bold px-4">💾 Güncelle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
