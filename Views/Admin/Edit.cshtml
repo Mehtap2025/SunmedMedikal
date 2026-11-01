@@ -1,6 +1,10 @@
 @model SunmedMedikal.Models.Product
 @{
     ViewData["Title"] = "Ürünü Düzenle";
+    string returnUrl = (TempData["ReturnUrl"] as string) ?? Context.Request.Query["returnUrl"].ToString();
+    if(string.IsNullOrEmpty(returnUrl)) {
+        returnUrl = "/Admin/Index";
+    }
 }
 
 <div class="container mt-5 mb-5" style="max-width: 900px;">
@@ -50,6 +54,9 @@
             </div>
             
             <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                @* DÖNÜŞ ADRESİ FORMUN İÇİNE ALINDI *@
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="ImageUrl" />
                 <input type="hidden" asp-for="AdditionalImageUrls" />
@@ -129,7 +136,7 @@
                         <label asp-for="SubSubSubCategory" class="form-label fw-bold text-dark text-truncate d-block">4. Alt Kategori</label>
                         <select asp-for="SubSubSubCategory" id="SubSubSubCategorySelect" class="form-select border-secondary">
                             <option value="">-- Seç --</option>
-                            @if(ViewBag.SubSubSubCategories != null) {
+                            @if(ViewBag.SubSubCategories != null) {
                             foreach(var sss in ViewBag.SubSubSubCategories) { <option value="@sss.Name" data-subsub="@sss.SubSubCategory">@sss.Name</option> }
                             }
                         </select>
@@ -169,7 +176,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="/Admin/Index" class="btn btn-outline-dark fw-bold px-4">İptal Et</a>
+                    <a href="@returnUrl" class="btn btn-outline-dark fw-bold px-4">İptal Et</a>
                     <button type="submit" class="btn btn-danger fw-bold px-4">Değişiklikleri Kaydet</button>
                 </div>
             </form>
@@ -193,7 +200,7 @@
                 fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '24', '36', '48' , '64', '82', '150'] 
             });
 
-            // 5 KADEMELİ JİLET GİBİ BİRBİRİNE BAĞLI AÇILIR KUTU SİSTEMİ (GÜNCELLENDİ)
+            // 5 KADEMELİ JİLET GİBİ BİRBİRİNE BAĞLI AÇILIR KUTU SİSTEMİ
             $('#MainCategorySelect').change(function() {
                 var main = $(this).val();
                 $('#SubCategorySelect option').each(function() {
@@ -222,7 +229,7 @@
                 });
             });
 
-            // SAYFA YÜKLENDİĞİNDE VERİLERİN SİLİNMEMESİ İÇİN ZIRHLI KOD
+            // SAYFA YÜKLENDİĞİNDE VERİLERİN SİLİNMEMESİ İÇİN KODLAR
             var initialSub = '@Html.Raw(Model.SubCategory)';
             var initialSubSub = '@Html.Raw(Model.SubSubCategory)';
             var initialSubSubSub = '@Html.Raw(Model.SubSubSubCategory)';

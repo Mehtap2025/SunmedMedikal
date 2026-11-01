@@ -54,8 +54,17 @@
                 <tbody>
                     @foreach (var order in Model)
                     {
+                        DateTime orderDisplay = order.OrderDate;
+                        try {
+                            orderDisplay = order.OrderDate.Kind == DateTimeKind.Utc 
+                                ? TimeZoneInfo.ConvertTimeFromUtc(order.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time"))
+                                : order.OrderDate.AddHours(3);
+                        } catch {
+                            orderDisplay = order.OrderDate;
+                        }
+
                         <tr>
-                            <td class="small">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="small">@orderDisplay.ToString("dd/MM/yyyy HH:mm")</td>
                             <td>
                                 <div class="fw-bold fs-5">@order.CustomerName.ToUpper()</div>
                                 <div class="text-muted small">ID: #@order.Id</div>
@@ -75,6 +84,7 @@
                                 else if(order.Status == "Kargolandı") { <span class="status-badge bg-success text-white">Kargolandı</span> }
                                 else if(order.Status == "Sipariş Tamamlandı") { <span class="status-badge bg-dark text-white">Sipariş Tamamlandı</span> }
                                 else if(order.Status == "İptal Edildi") { <span class="status-badge bg-danger text-white">İptal Edildi</span> }
+                                else if(order.Status == "Ödeme Alınamadı") { <span class="status-badge bg-danger text-white">Ödeme Alınamadı</span> }
                                 else { <span class="status-badge bg-secondary text-white">@order.Status</span> }
                             </td>
                             <td class="text-center">
@@ -89,6 +99,7 @@
                                         <option value="Hazırlanıyor" selected="@(order.Status == "Hazırlanıyor")">📦 Hazırlanıyor</option>
                                         <option value="Kargolandı" selected="@(order.Status == "Kargolandı")">🚚 Kargolandı</option>
                                         <option value="Sipariş Tamamlandı" selected="@(order.Status == "Sipariş Tamamlandı")">✅ Sipariş Tamamlandı</option>
+                                        <option value="Ödeme Alınamadı" selected="@(order.Status == "Ödeme Alınamadı")">💳 Ödeme Alınamadı</option>
                                         <option value="İptal Edildi" selected="@(order.Status == "İptal Edildi")">❌ İptal Edildi</option>
                                     </select>
                                     <button type="submit" class="btn btn-sm btn-danger">Güncelle</button>

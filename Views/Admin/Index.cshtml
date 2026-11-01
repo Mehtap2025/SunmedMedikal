@@ -1,6 +1,8 @@
 @model List<SunmedMedikal.Models.Product>
 @{
     ViewData["Title"] = "Ürün Yönetimi";
+    string currentSort = ViewData["CurrentSort"] as string ?? "";
+    string currentFilter = ViewData["CurrentFilter"] as string ?? "";
 }
 
 <div class="container mt-5 mb-5" style="min-height: 60vh;">
@@ -14,8 +16,9 @@
 
     <div class="card shadow-sm mb-4 border-secondary">
         <div class="card-body bg-light">
-            <form asp-action="Index" method="get" class="d-flex align-items-center">
-                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control me-3 border-secondary" placeholder="🔍 Ürün Adı veya Ürün Kodu ile ara..." />
+            <form action="/Admin/Index" method="get" class="d-flex align-items-center">
+                <input type="hidden" name="sortOrder" value="@currentSort" />
+                <input type="text" name="searchString" value="@currentFilter" class="form-control me-3 border-secondary" placeholder="🔍 Ürün Adı veya Ürün Kodu ile ara..." />
                 <button type="submit" class="btn btn-danger fw-bold px-4 shadow-sm">Ara</button>
                 <a href="/Admin/Index" class="btn btn-outline-dark fw-bold ms-2 shadow-sm">Temizle</a>
             </form>
@@ -27,13 +30,55 @@
             <table class="table table-hover table-striped mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col" class="ps-4">ID</th>
-                        <th scope="col">Ürün Kodu</th>
+                        <th scope="col" class="ps-4">
+                            <a href="/Admin/Index?sortOrder=@ViewData["IdSortParam"]&searchString=@currentFilter" class="text-white text-decoration-none d-flex align-items-center">
+                                ID 
+                                <span class="ms-1">
+                                    @(currentSort == "id_asc" ? "▲" : (string.IsNullOrEmpty(currentSort) ? "▼" : "↕"))
+                                </span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="/Admin/Index?sortOrder=@ViewData["CodeSortParam"]&searchString=@currentFilter" class="text-white text-decoration-none d-flex align-items-center">
+                                Ürün Kodu
+                                <span class="ms-1">
+                                    @(currentSort == "code_asc" ? "▲" : (currentSort == "code_desc" ? "▼" : "↕"))
+                                </span>
+                            </a>
+                        </th>
                         <th scope="col">Görsel</th>
-                        <th scope="col">Marka</th>
-                        <th scope="col">Ürün Adı</th>
-                        <th scope="col" class="text-center">Stok</th>
-                        <th scope="col">Fiyat</th>
+                        <th scope="col">
+                            <a href="/Admin/Index?sortOrder=@ViewData["BrandSortParam"]&searchString=@currentFilter" class="text-white text-decoration-none d-flex align-items-center">
+                                Marka
+                                <span class="ms-1">
+                                    @(currentSort == "brand_asc" ? "▲" : (currentSort == "brand_desc" ? "▼" : "↕"))
+                                </span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="/Admin/Index?sortOrder=@ViewData["NameSortParam"]&searchString=@currentFilter" class="text-white text-decoration-none d-flex align-items-center">
+                                Ürün Adı
+                                <span class="ms-1">
+                                    @(currentSort == "name_asc" ? "▲" : (currentSort == "name_desc" ? "▼" : "↕"))
+                                </span>
+                            </a>
+                        </th>
+                        <th scope="col" class="text-center">
+                            <a href="/Admin/Index?sortOrder=@ViewData["StockSortParam"]&searchString=@currentFilter" class="text-white text-decoration-none d-inline-flex align-items-center justify-content-center">
+                                Stok
+                                <span class="ms-1">
+                                    @(currentSort == "stock_asc" ? "▲" : (currentSort == "stock_desc" ? "▼" : "↕"))
+                                </span>
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a href="/Admin/Index?sortOrder=@ViewData["PriceSortParam"]&searchString=@currentFilter" class="text-white text-decoration-none d-flex align-items-center">
+                                Fiyat
+                                <span class="ms-1">
+                                    @(currentSort == "price_asc" ? "▲" : (currentSort == "price_desc" ? "▼" : "↕"))
+                                </span>
+                            </a>
+                        </th>
                         <th scope="col" class="text-end pe-4">İşlemler</th>
                     </tr>
                 </thead>

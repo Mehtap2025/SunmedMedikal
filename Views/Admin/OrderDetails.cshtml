@@ -1,6 +1,27 @@
 @model SunmedMedikal.Models.Order
 @{
     ViewData["Title"] = "Sipariş Yönetimi";
+
+    // Türkiye saatine (UTC+3) kesin dönüştürme mantığı
+    DateTime displayDate = Model.OrderDate;
+    try
+    {
+        TimeZoneInfo turkeyZone = TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time");
+        // Eğer tarih UTC ise veya sunucu saati farklıysa Türkiye saatine çevir
+        if (Model.OrderDate.Kind == DateTimeKind.Utc)
+        {
+            displayDate = TimeZoneInfo.ConvertTimeFromUtc(Model.OrderDate, turkeyZone);
+        }
+        else
+        {
+            // Sunucu saati UTC varsayılarak Türkiye saatine normalize edilir (+3 saat)
+            displayDate = Model.OrderDate.AddHours(3);
+        }
+    }
+    catch
+    {
+        displayDate = Model.OrderDate;
+    }
 }
 
 <style>
@@ -33,7 +54,7 @@
                 <h5 class="text-danger fw-bold border-bottom border-secondary pb-2 mb-3">Sipariş Bilgileri (#@Model.Id)</h5>
                 
                 <p><strong>Müşteri:</strong> @Model.CustomerName</p>
-                <p><strong>Tarih:</strong> @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</p>
+                <p><strong>Tarih:</strong> @displayDate.ToString("dd.MM.yyyy HH:mm")</p>
                 <p><strong>Toplam Tutar:</strong> <span class="text-success fw-bold">@Model.TotalAmount.ToString("N2") TL</span></p>
                 
                 <h5 class="text-danger fw-bold border-bottom border-secondary pb-2 mt-4 mb-3">Sipariş Notu ve Ürünler</h5>
@@ -65,12 +86,13 @@
                             <option value="Hazırlanıyor" selected="@(Model.Status == "Hazırlanıyor")">📦 Hazırlanıyor</option>
                             <option value="Kargolandı" selected="@(Model.Status == "Kargolandı")">🚚 Kargolandı</option>
                             <option value="Sipariş Tamamlandı" selected="@(Model.Status == "Sipariş Tamamlandı")">✅ Sipariş Tamamlandı</option>
+                            <option value="Ödeme Alınamadı" selected="@(Model.Status == "Ödeme Alınamadı")">💳 Ödeme Alınamadı</option>
                             <option value="İptal Edildi" selected="@(Model.Status == "İptal Edildi")">❌ İptal Edildi</option>
                         </select>
                     </div>
 
                     <div class="alert bg-dark border-secondary text-white-50 small mb-4">
-                        <i class="fas fa-info-circle text-info"></i> Durumu güncellediğiniz an müşteriye otomatik olarak E-Posta (ve SMS) gönderilecektir.
+                        <i class="fas fa-info-circle text-info"></i> Durumu güncellediğiniz an müşteriye SMS ve yöneticiye bildirim e-postası iletilecektir.
                     </div>
 
                     <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold rounded-pill text-dark shadow-sm">

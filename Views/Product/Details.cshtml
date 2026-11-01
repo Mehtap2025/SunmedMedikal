@@ -114,7 +114,18 @@
         </div>
 
         <div class="col-md-6 ps-md-5">
-            <h2 class="display-6 fw-bold text-white mb-3">@Model.Name</h2>
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h2 class="display-6 fw-bold text-white mb-0">@Model.Name</h2>
+                
+                @* SADECE ADMİN GİRİŞİ YAPILDIĞINDA GÖRÜNEN DÜZENLE BUTONU *@
+                @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <a href="/Admin/Edit/@Model.Id?returnUrl=@Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString)" class="btn btn-danger btn-sm fw-bold shadow ms-2 text-nowrap">
+                        ✏️ Bu Ürünü Düzenle
+                    </a>
+                }
+            </div>
+
             <h3 class="text-danger fw-bold mb-4">@Model.Price.ToString("N2") @Model.Currency</h3>
             
             <p class="lead text-white-50 mb-4" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-wrap;">@Model.Description</p>

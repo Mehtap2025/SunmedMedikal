@@ -3,6 +3,7 @@
 @model IEnumerable<SunmedMedikal.Models.Product>
 @{
     ViewData["Title"] = ViewBag.CategoryName;
+    string currentCategoryUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <style>
@@ -105,9 +106,19 @@
                     images.AddRange(urun.AdditionalImageUrls.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)));
                 }
 
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card product-card h-100" style="border-top: 3px solid @(urun.IsQuoteOnly ? "#ffc107" : "#dc3545");">
+                <div class="col-lg-3 col-md-4 col-sm-6" id="urun-@urun.Id">
+                    <div class="card product-card h-100 position-relative" style="border-top: 3px solid @(urun.IsQuoteOnly ? "#ffc107" : "#dc3545");">
                         
+                        @* SADECE ADMİN İÇİN DÜZENLE BUTONU *@
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <div class="position-absolute top-0 end-0 p-2" style="z-index: 40;">
+                                <a href="/Admin/Edit/@urun.Id?returnUrl=@Uri.EscapeDataString(currentCategoryUrl + "#urun-" + urun.Id)" class="btn btn-danger btn-sm fw-bold shadow-sm py-0 px-2" style="font-size: 0.8rem; border-radius: 6px;">
+                                    ✏️ Düzenle
+                                </a>
+                            </div>
+                        }
+
                         <div class="product-image-container" onclick="window.location.href='/Product/Details/@urun.Id'">
                             @for(int i = 0; i < images.Count; i++)
                             {
